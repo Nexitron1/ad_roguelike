@@ -4,9 +4,7 @@ using UnityEngine;
 
 public class Cuprum : Item
 {
-    Rarity rarity;
-    public override void SetRarity(Rarity r) { rarity = r; }
-    public override Rarity GetRarity() { return rarity; }
+
 
     //Всё что выше надо копипастить
     public override void Init()

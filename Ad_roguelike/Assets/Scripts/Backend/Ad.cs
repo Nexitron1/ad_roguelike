@@ -12,7 +12,6 @@ public class Ad : MonoBehaviour
     {
         character = Camera.main.GetComponent<Character>();
         character.StartTimer(this, 30f);
-        
     }
     void Update()
     {

@@ -4,10 +4,11 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
+using static UnityEditor.Progress;
 
 public class Character : MonoBehaviour
 {
-    public Item.Rarity TestRarity;
+    public Item.Rarity[] TestRarity;
     public List<Item> items = new List<Item>();
     public float TesttimeMultiplier = 1;
     public float sliderPos = 1;
@@ -33,19 +34,32 @@ public class Character : MonoBehaviour
             MultRight = 0.000001f;
         }
     }
+    InventoryShow inventory;
+    public void InventorySet(InventoryShow inv)
+    {
+        inventory = inv;
+        if (inventory != null)
+        {
+            foreach (Item item in items)
+            inventory.AddItem(item.ItemType);
+        }
+    }
     void RecreateItems()
     {
         for (int i = 0; i < items.Count; i++)
         {
             if (items[i] != null)
             {
-                Item.Rarity r = TestRarity;
+
+                //Item.Rarity r = (Item.Rarity)Random.Range(0, 4);
+                Item.Rarity r = TestRarity[i];
                 if (items[i].ItemType != null)
                 {
-                    r = items[i].ItemType.GetRarity();
+                    Debug.Log("They have");
+                    r = items[i].ItemType.rarity;
                 }
                 items[i] = Instantiate(items[i]);
-                items[i].SetInventory(this);
+                items[i].SetCharacter(this);
                 items[i].SetFunctional(r);
             }
         }
@@ -55,6 +69,7 @@ public class Character : MonoBehaviour
         foreach (Item item in items)
         {
             OnFirstTime(item);
+            
         }
     }
     void Update()
@@ -89,7 +104,7 @@ public class Character : MonoBehaviour
 
 
 
-    bool canBeDamaged = true;
+    bool canBeDamaged = false;
     bool endlessTimer = true;
     public void StartTimer(Ad _ad, float Duration)
     {
@@ -104,7 +119,7 @@ public class Character : MonoBehaviour
     public void AddItem(Item item, Item.Rarity rarity)
     {
         items.Add(Instantiate(item));
-        items[items.Count - 1].SetInventory(this);
+        items[items.Count - 1].SetCharacter(this);
         items[items.Count - 1].SetFunctional(rarity);
         OnFirstTime(item);
     }
@@ -139,29 +154,47 @@ public class Character : MonoBehaviour
 
         }
     }
+    bool TimerStarted = false;
     IEnumerator Timer()
     {
-        canBeDamaged = true;
-        OnAdStarts();
-        while (time < endTime)
+        if (TimerStarted == false)
         {
-            if (time < endTime / 2)
+            TimerStarted = true;
+            canBeDamaged = true;
+            OnAdStarts();
+            yield return null;
+            float sec = 0;
+            while (time < endTime)
             {
-                yield return new WaitForSeconds(1f * TesttimeMultiplier / MultLeft);
-                time += 1f * TesttimeMultiplier;
+                if (time < endTime / 2)
+                {
+                    yield return new WaitForSeconds(TesttimeMultiplier / MultLeft);
+                    time += TesttimeMultiplier;
+                }
+                else
+                {
+                    yield return new WaitForSeconds(TesttimeMultiplier / MultRight);
+                    time += TesttimeMultiplier;
+                }
+
+                sec += TesttimeMultiplier;
+                if (sec >= 1)
+                {
+                    OnEachSec();
+                    sec = 0;
+                }
             }
-            else
+            canBeDamaged = false;
+            OnFightEnd();
+            time = 0;
+            if (ad != null)
             {
-                yield return new WaitForSeconds(1f * TesttimeMultiplier / MultRight);
-                time += 1f * TesttimeMultiplier;
+                ad.transform.parent.parent.GetComponent<Window>().CloseWindow();
+                Debug.Log("Ad closed Automaticly");
             }
-            OnEachSec();
+            ad = null;
+            TimerStarted = false;
         }
-        canBeDamaged = false;
-        OnFightEnd();
-        time = 0;
-        ad.transform.parent.parent.GetComponent<Window>().CloseWindow();
-        ad = null;
     }
 
 

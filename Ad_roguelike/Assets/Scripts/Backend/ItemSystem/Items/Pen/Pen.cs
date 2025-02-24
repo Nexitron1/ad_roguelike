@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class Pen : Item
 {
-    Rarity rarity;
-    public override void SetRarity(Rarity r) { rarity = r; }
-    public override Rarity GetRarity() { return rarity; }
 
     //Всё что выше надо копипастить
 
@@ -25,7 +22,7 @@ public class Pen : Item
                 character.PlusMults(0.5f, -0.4f);
                 break;
             case Rarity.special:
-                character.PlusMults(1f, 1f);
+                character.PlusMults(-1f, 1f);
                 break;
         }
     }
