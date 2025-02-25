@@ -524,9 +524,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 495ee1e5f93506a4a9109a6604aef205, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TestRarity: 03000000
+  TestRarity: 00000000
   items:
   - {fileID: 11400000, guid: ae01f0d8c737e394298ea441399f424a, type: 2}
+  activeItems:
+  - {fileID: 11400000, guid: 59e064d3b38b81f408c9010c9d28c251, type: 2}
+  - {fileID: 11400000, guid: 6eeb268ae41f1eb41b62e26644aba130, type: 2}
   TesttimeMultiplier: 0.05
   sliderPos: 1
   Health: 50

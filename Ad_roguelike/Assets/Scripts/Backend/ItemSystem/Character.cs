@@ -10,6 +10,7 @@ public class Character : MonoBehaviour
 {
     public Item.Rarity[] TestRarity;
     public List<Item> items = new List<Item>();
+    public List<ActiveItem> activeItems = new List<ActiveItem>();
     public float TesttimeMultiplier = 1;
     public float sliderPos = 1;
     public float Health = 50, MaxHealth = 50;

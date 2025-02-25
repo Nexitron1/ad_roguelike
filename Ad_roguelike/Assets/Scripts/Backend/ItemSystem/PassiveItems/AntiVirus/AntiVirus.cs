@@ -7,9 +7,10 @@ public class AntiVirus : Item
     public override void Init()
     {
         character = Camera.main.GetComponent<Character>();
+        float t = character.MaxHealth;
         switch (rarity)
         {
-            case Rarity.common:
+            case Rarity.common:              
                 character.MaxHealth += 10;
                 break;
             case Rarity.uncommon:
@@ -25,5 +26,6 @@ public class AntiVirus : Item
                 character.PlusMults(-0.25f, -0.25f);
                 break;
         }
+        character.Health += character.MaxHealth - t;
     }
 }
