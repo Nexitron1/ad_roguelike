@@ -40,7 +40,6 @@ public class Cuprum : Item
         switch (rarity) {
             case Rarity.common: 
                 character.SkipTimeByDurationAndPlace(2f, "end");
-                Debug.Log("I skipped");
                 break;
             case Rarity.uncommon:
                 character.SkipTimeByDurationAndPlace(5f, "start");

@@ -12,7 +12,7 @@ public class Character : MonoBehaviour
     public List<Item> items = new List<Item>();
     public float TesttimeMultiplier = 1;
     public float sliderPos = 1;
-    public int Health = 50, MaxHealth = 50;
+    public float Health = 50, MaxHealth = 50;
     public float MultLeft = 1f, MultRight = 1f;
     void Start()
     {
@@ -128,15 +128,16 @@ public class Character : MonoBehaviour
     {
         if(place == "start")
         {
-            time += duration;
+            if (time < duration)
+                time = duration;
         }
         else if(place == "end")
         {
             endTime -= duration; 
         }
-        else
+        else if (place == "now")
         {
-
+            time += duration;
         }
     }
     public void SkipTimeByPercentAndPlace(float percent, string place)
@@ -149,9 +150,9 @@ public class Character : MonoBehaviour
         {
             endTime -= endTime * percent;
         }
-        else
+        else if  (place == "now")
         {
-
+            time += percent * endTime;
         }
     }
     bool TimerStarted = false;

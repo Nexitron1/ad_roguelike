@@ -26,7 +26,8 @@ public class Item : ScriptableObject
     public enum Functional //Добавлять для каждого предмета!!!!!
     {
         Cuprum,
-        Pen
+        Pen,
+        AntiVirus
     }
     public void SetFunctional(Rarity r) //Добавлять для каждого предмета!!!!!
     {
@@ -34,13 +35,16 @@ public class Item : ScriptableObject
         {
             case Functional.Cuprum:
                 ItemType = Item.CreateInstance<Cuprum>();
-                ItemType.rarity = r;
                 break;
             case Functional.Pen:
                 ItemType = Item.CreateInstance<Pen>();
-                ItemType.rarity = r;
                 break;
+            case Functional.AntiVirus:
+                ItemType = Item.CreateInstance<AntiVirus>();
+                break;
+            
         }
+        ItemType.rarity = r;
         ItemType.icon = this.icon;
         ItemType.largeIcon = this.largeIcon;
         ItemType.character = this.character;
