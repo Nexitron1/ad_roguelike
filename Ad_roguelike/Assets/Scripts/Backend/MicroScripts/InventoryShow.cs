@@ -37,26 +37,33 @@ public class InventoryShow : MonoBehaviour
     }
     public void AddItem(Item item)
     {
-        items[itemsCount] = item;
-        slots[itemsCount].GetChild(0).GetComponent<SpriteRenderer>().sprite = item.icon;
-        switch (item.rarity) 
+        if (itemsCount < 18)
         {
-            case Item.Rarity.common:
-                slots[itemsCount].GetComponent<SpriteRenderer>().color = rarityColors[0];
-                break;
-            case Item.Rarity.uncommon:
-                slots[itemsCount].GetComponent<SpriteRenderer>().color = rarityColors[1];
-                break;
-            case Item.Rarity.rare:
-                slots[itemsCount].GetComponent<SpriteRenderer>().color = rarityColors[2];
-                break;
-            case Item.Rarity.special:
-                slots[itemsCount].GetComponent<SpriteRenderer>().color = rarityColors[3];
-                break;
-        
-        }
+            items[itemsCount] = item;
+            slots[itemsCount].GetChild(0).GetComponent<SpriteRenderer>().sprite = item.icon;
+            switch (item.rarity)
+            {
+                case Item.Rarity.common:
+                    slots[itemsCount].GetComponent<SpriteRenderer>().color = rarityColors[0];
+                    break;
+                case Item.Rarity.uncommon:
+                    slots[itemsCount].GetComponent<SpriteRenderer>().color = rarityColors[1];
+                    break;
+                case Item.Rarity.rare:
+                    slots[itemsCount].GetComponent<SpriteRenderer>().color = rarityColors[2];
+                    break;
+                case Item.Rarity.special:
+                    slots[itemsCount].GetComponent<SpriteRenderer>().color = rarityColors[3];
+                    break;
 
-        itemsCount++;
+            }
+
+            itemsCount++;
+        }
+        else
+        {
+            Debug.LogError("Reached limit of items");
+        }
     }
 
     public void SelectItem(int select)

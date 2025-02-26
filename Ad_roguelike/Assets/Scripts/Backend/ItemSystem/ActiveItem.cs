@@ -19,7 +19,7 @@ public class ActiveItem : ScriptableObject
         Black
     }
 
-    public void SetFunctional(Rarity r) //Добавлять для каждого предмета!!!!!
+    public void SetFunctional() //Добавлять для каждого предмета!!!!!
     {
         switch (functional)
         {

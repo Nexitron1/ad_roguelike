@@ -15,6 +15,8 @@ public class Character : MonoBehaviour
     public float sliderPos = 1;
     public float Health = 50, MaxHealth = 50;
     public float MultLeft = 1f, MultRight = 1f;
+
+    public float Damage = 1f;
     void Start()
     {
         RecreateItems();
@@ -35,6 +37,10 @@ public class Character : MonoBehaviour
             MultRight = 0.000001f;
         }
     }
+    public void SkipAd()
+    {
+        skipAd = true;
+    }
     InventoryShow inventory;
     public void InventorySet(InventoryShow inv)
     {
@@ -42,7 +48,19 @@ public class Character : MonoBehaviour
         if (inventory != null)
         {
             foreach (Item item in items)
-            inventory.AddItem(item.ItemType);
+                inventory.AddItem(item.ItemType);
+        }
+    }
+    Hotbar hotbar;
+    public void HotbarSet(Hotbar _hotbar)
+    {
+        hotbar = _hotbar;
+        if(hotbar != null)
+        {
+            foreach(ActiveItem actItem in activeItems)
+            {
+                hotbar.AddItem(actItem.ItemType);
+            }
         }
     }
     void RecreateItems()
@@ -62,6 +80,16 @@ public class Character : MonoBehaviour
                 items[i] = Instantiate(items[i]);
                 items[i].SetCharacter(this);
                 items[i].SetFunctional(r);
+            }
+        }
+
+        for (int i = 0; i < activeItems.Count; i++)
+        {
+            if(activeItems[i] != null)
+            {
+                activeItems[i] = Instantiate(activeItems[i]);
+                activeItems[i].SetCharacter(this);
+                activeItems[i].SetFunctional();
             }
         }
     }
@@ -145,7 +173,7 @@ public class Character : MonoBehaviour
     {
         if (place == "start")
         {
-            time += endTime * percent;
+            time += (endTime - time) * percent;
         }
         else if (place == "end")
         {
@@ -156,7 +184,7 @@ public class Character : MonoBehaviour
             time += percent * endTime;
         }
     }
-    bool TimerStarted = false;
+    bool TimerStarted = false, skipAd = false;
     IEnumerator Timer()
     {
         if (TimerStarted == false)
@@ -166,7 +194,7 @@ public class Character : MonoBehaviour
             OnAdStarts();
             yield return null;
             float sec = 0;
-            while (time < endTime)
+            while (time < endTime && !skipAd)
             {
                 if (time < endTime / 2)
                 {
@@ -195,6 +223,7 @@ public class Character : MonoBehaviour
                 Debug.Log("Ad closed Automaticly");
             }
             ad = null;
+            skipAd = false;
             TimerStarted = false;
         }
     }
@@ -207,7 +236,7 @@ public class Character : MonoBehaviour
             if (canBeDamaged)
             {
                 yield return new WaitForSeconds(1);
-                Health -= 1;
+                Health -= Damage;
             }
             else
             {
@@ -224,7 +253,13 @@ public class Character : MonoBehaviour
 
 
 
-
+    public void OnActiveArtUsed()
+    {
+        foreach(Item item in items)
+        {
+            item.ItemType.OnActiveArtUsed();
+        }
+    }
     public void OnEachSec()
     {
         foreach (Item item in items) 

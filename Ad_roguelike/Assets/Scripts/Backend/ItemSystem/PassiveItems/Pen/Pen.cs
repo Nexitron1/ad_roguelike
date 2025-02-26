@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Pen : Item
 {
+    //настоящий
 
     //Всё что выше надо копипастить
 

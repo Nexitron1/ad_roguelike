@@ -27,7 +27,8 @@ public class Item : ScriptableObject
     {
         Cuprum,
         Pen,
-        AntiVirus
+        AntiVirus,
+        Medali
     }
     public void SetFunctional(Rarity r) //Добавлять для каждого предмета!!!!!
     {
@@ -41,6 +42,9 @@ public class Item : ScriptableObject
                 break;
             case Functional.AntiVirus:
                 ItemType = Item.CreateInstance<AntiVirus>();
+                break;
+            case Functional.Medali:
+                ItemType = Item.CreateInstance<Medali>();
                 break;
             
         }
@@ -60,12 +64,22 @@ public class Item : ScriptableObject
     {
         character = _ch;
     }
-    public virtual void OnActiveArtUsed() { Debug.LogWarning("Non-realised"); } //нет инструментов для реализации
+    public virtual void OnActiveArtUsed() { Debug.LogWarning("Non-realised"); } //реализовано
     public virtual void Init() { } //реализовано
     public virtual void OnAdStart() { } //реализовано
     public virtual void OnEachSec() { } //реализовано
     public virtual void OnRoomEntry() { } //реализовано
     public virtual void OnFightEnd() { } //реализовано
     public virtual void OnEachFrame() { } //реализовано
+    public bool Random(int chance)
+    {
+        int r = UnityEngine.Random.Range(0, 100);
+
+        if(r < chance)
+        {
+            return true;
+        }
+        return false;
+    }
     //Debug.LogWarning("You're trying to use empty method, or there's no override");
 }

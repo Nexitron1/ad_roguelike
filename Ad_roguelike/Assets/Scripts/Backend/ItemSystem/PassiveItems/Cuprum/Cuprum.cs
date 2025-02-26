@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Cuprum : Item
 {
-
+    //настоящий
 
     //Всё что выше надо копипастить
     public override void Init()

@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   windowProperties: {fileID: 11400000, guid: f72c94d5e141dd645bdf113f7a4ee47d, type: 2}
   iconName: Settings
-  iconSprite: {fileID: -1268800499, guid: 7c02b09b7fe26ac4da0dcd3b59f52cd3, type: 3}
+  iconSprite: {fileID: -868798425, guid: ed5220735b4c5cc41a0a9f2011a90773, type: 3}

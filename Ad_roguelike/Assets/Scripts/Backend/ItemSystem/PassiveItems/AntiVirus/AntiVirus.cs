@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class AntiVirus : Item
 {
+    //настоящий
     public override void Init()
     {
         character = Camera.main.GetComponent<Character>();

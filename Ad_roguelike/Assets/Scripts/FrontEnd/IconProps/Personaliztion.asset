@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   windowProperties: {fileID: 11400000, guid: 54f8dd49995973348bd7a0f916752015, type: 2}
   iconName: "\u041F\u0435\u0440\u0441\u043E\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u044F"
-  iconSprite: {fileID: 518538292, guid: 0447691a148bae54ba3f0f802d5f7232, type: 3}
+  iconSprite: {fileID: -1237744048, guid: ed5220735b4c5cc41a0a9f2011a90773, type: 3}
