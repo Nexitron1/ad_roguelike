@@ -292,7 +292,7 @@ Transform:
   m_GameObject: {fileID: 4048299670422780829}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 325, y: 360, z: 0}
+  m_LocalPosition: {x: 325, y: 354, z: 0}
   m_LocalScale: {x: 250, y: 250, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -415,7 +415,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6344901708790800312}
-  - component: {fileID: 1398089082695429869}
   m_Layer: 0
   m_Name: Map
   m_TagString: Untagged
@@ -438,22 +437,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3108665160110987300}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1398089082695429869
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4299244099387340046}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e81f849fccb05d44a76a49e4e38203e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  RoomPrefab: {fileID: 7162833453977232157, guid: b505a5c9f48c33848880807e36a71edc, type: 3}
-  CorridorPrefab: {fileID: 8789227042057448768, guid: 7dc06e19deb65254e80eb0b1528ec4c2, type: 3}
-  transitions1: []
-  transitions2: []
 --- !u!1 &6865527717977660938
 GameObject:
   m_ObjectHideFlags: 0
@@ -632,6 +615,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3108665160110987300}
   - component: {fileID: 8830309108099042501}
+  - component: {fileID: 4611704787382898457}
   m_Layer: 0
   m_Name: Map Template
   m_TagString: Untagged
@@ -671,6 +655,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 947fd605377a50f4e95c320f9bd3b953, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &4611704787382898457
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7380107263509763316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50b034d5b22f2e4459eef679e0faca3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RoomPrefab: {fileID: 7162833453977232157, guid: b505a5c9f48c33848880807e36a71edc, type: 3}
+  CorridorPrefab: {fileID: 8789227042057448768, guid: 7dc06e19deb65254e80eb0b1528ec4c2, type: 3}
 --- !u!1 &7522209705485509290
 GameObject:
   m_ObjectHideFlags: 0

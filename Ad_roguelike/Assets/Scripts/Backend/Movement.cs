@@ -5,17 +5,20 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
-    Vector2Int MyPos = Vector2Int.zero;
+    Vector2Int MyPos;
     MapGenerator generator;
-    bool CanMove = true;
+    public bool CanMove = true;
     Animator Cosmonaut;
-    Character inventory;
+    Character character;
     
     private void Start()
     {
-        generator = transform.parent.GetChild(1).transform.GetComponent<MapGenerator>();
+        generator = Camera.main.GetComponent<MapGenerator>();
         Cosmonaut = transform.parent.GetChild(2).GetComponent<Animator>();
-        inventory = Camera.main.GetComponent<Character>();
+        character = Camera.main.GetComponent<Character>();
+
+        character.SetMovement(this);
+        MyPos = character.CosmonautPos;
 
     }
     void Update()
@@ -71,6 +74,8 @@ public class Movement : MonoBehaviour
                 }
             }
         }
+
+        character.CosmonautPos = MyPos;
     }
 
     bool SearchTransitions(Vector2Int start, Vector2Int end)
@@ -113,6 +118,6 @@ public class Movement : MonoBehaviour
         Cosmonaut.SetBool("isRun", false);
         transform.localScale = new Vector3(35, 35, 1);
 
-        inventory.OnRoomEnter();
+        character.RoomEntry(generator.rooms[MyPos]);
     }
 }

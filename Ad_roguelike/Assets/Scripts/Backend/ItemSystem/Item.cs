@@ -64,7 +64,7 @@ public class Item : ScriptableObject
     {
         character = _ch;
     }
-    public virtual void OnActiveArtUsed() { Debug.LogWarning("Non-realised"); } //реализовано
+    public virtual void OnActiveArtUsed() {} //реализовано
     public virtual void Init() { } //реализовано
     public virtual void OnAdStart() { } //реализовано
     public virtual void OnEachSec() { } //реализовано

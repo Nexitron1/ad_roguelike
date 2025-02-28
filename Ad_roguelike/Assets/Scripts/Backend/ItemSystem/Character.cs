@@ -16,13 +16,23 @@ public class Character : MonoBehaviour
     public float Health = 50, MaxHealth = 50;
     public float MultLeft = 1f, MultRight = 1f;
 
+    public MapGenerator generator;
+    public Movement cosmonaut;
+    public Vector2Int CosmonautPos = Vector2Int.zero;
+
+    public Icon Ad1;
     public float Damage = 1f;
     void Start()
     {
+        generator = GetComponent<MapGenerator>();
         RecreateItems();
         FirstTimeForItems();
         StartCoroutine(DamageTimer());
     }
+    public void SetMovement(Movement m)
+    {
+        cosmonaut = m;
+    } 
     public void PlusMults(float left, float right)
     {
         MultLeft += left;
@@ -101,8 +111,26 @@ public class Character : MonoBehaviour
             
         }
     }
+
+    public void RoomEntry(MapGenerator.RoomTypes roomType)
+    {
+        OnRoomEnter();
+        switch (roomType)
+        {
+            case MapGenerator.RoomTypes.Fight:
+                Ad1.StartApp();
+                break;
+            case MapGenerator.RoomTypes.Boss:
+                break;
+            case MapGenerator.RoomTypes.Shop:
+                break;
+            case MapGenerator.RoomTypes.Treasure:
+                break;
+        }
+    }
     void Update()
     {
+        
         if (Health > MaxHealth) Health = MaxHealth;
         if (ad != null)
         {
@@ -123,6 +151,7 @@ public class Character : MonoBehaviour
         {
             item.ItemType.OnEachFrame();
         }
+
 
     }
 
@@ -269,6 +298,13 @@ public class Character : MonoBehaviour
     }
     public void OnFightEnd()
     {
+        if (cosmonaut != null)
+            cosmonaut.CanMove = true;
+        if (generator != null)
+        {
+            generator.rooms[CosmonautPos] = MapGenerator.RoomTypes.Empty;
+            generator.RefreshIcons();
+        }
         foreach (Item item in items)
         {
             item.ItemType.OnFightEnd();
@@ -287,6 +323,8 @@ public class Character : MonoBehaviour
     }
     public void OnAdStarts()
     {
+        if (cosmonaut != null)
+            cosmonaut.CanMove = false;
         foreach (Item item in items)
         {
             item.ItemType.OnAdStart();

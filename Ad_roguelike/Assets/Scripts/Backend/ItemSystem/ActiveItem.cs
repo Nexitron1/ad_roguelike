@@ -49,6 +49,7 @@ public class ActiveItem : ScriptableObject
         character = _ch;
     }
 
+
     public virtual void OnActivate()
     {
 

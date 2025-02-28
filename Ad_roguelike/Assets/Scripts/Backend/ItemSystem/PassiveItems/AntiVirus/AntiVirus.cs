@@ -24,7 +24,7 @@ public class AntiVirus : Item
                 break;
             case Rarity.special:
                 character.MaxHealth *= 1.5f;
-                character.PlusMults(-0.25f, -0.25f);
+                character.PlusMults(-0.6f, -0.6f);
                 break;
         }
         character.Health += character.MaxHealth - t;

@@ -509,6 +509,7 @@ GameObject:
   - component: {fileID: 519420029}
   - component: {fileID: 519420033}
   - component: {fileID: 519420034}
+  - component: {fileID: 519420035}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -615,9 +616,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 495ee1e5f93506a4a9109a6604aef205, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TestRarity: 02000000
+  TestRarity: 030000000300000003000000030000000300000003000000030000000300000003000000030000000300000003000000030000000300000003000000
   items:
-  - {fileID: 11400000, guid: 8fa0b8ae7b801204cbb5e0e03f565eb7, type: 2}
+  - {fileID: 11400000, guid: b9a934b555589724fbabcfe56bd5a3a0, type: 2}
+  - {fileID: 11400000, guid: c91caab1f2a97cf4898e41a12efb82ee, type: 2}
+  - {fileID: 11400000, guid: c91caab1f2a97cf4898e41a12efb82ee, type: 2}
+  - {fileID: 11400000, guid: c91caab1f2a97cf4898e41a12efb82ee, type: 2}
+  - {fileID: 11400000, guid: c91caab1f2a97cf4898e41a12efb82ee, type: 2}
+  - {fileID: 11400000, guid: c91caab1f2a97cf4898e41a12efb82ee, type: 2}
+  - {fileID: 11400000, guid: c91caab1f2a97cf4898e41a12efb82ee, type: 2}
+  - {fileID: 11400000, guid: c91caab1f2a97cf4898e41a12efb82ee, type: 2}
+  - {fileID: 11400000, guid: c91caab1f2a97cf4898e41a12efb82ee, type: 2}
+  - {fileID: 11400000, guid: c91caab1f2a97cf4898e41a12efb82ee, type: 2}
+  - {fileID: 11400000, guid: c91caab1f2a97cf4898e41a12efb82ee, type: 2}
+  - {fileID: 11400000, guid: c91caab1f2a97cf4898e41a12efb82ee, type: 2}
+  - {fileID: 11400000, guid: c91caab1f2a97cf4898e41a12efb82ee, type: 2}
+  - {fileID: 11400000, guid: c91caab1f2a97cf4898e41a12efb82ee, type: 2}
+  - {fileID: 11400000, guid: c91caab1f2a97cf4898e41a12efb82ee, type: 2}
   activeItems:
   - {fileID: 11400000, guid: 59e064d3b38b81f408c9010c9d28c251, type: 2}
   - {fileID: 11400000, guid: 6eeb268ae41f1eb41b62e26644aba130, type: 2}
@@ -627,7 +642,30 @@ MonoBehaviour:
   MaxHealth: 50
   MultLeft: 1
   MultRight: 1
+  generator: {fileID: 0}
+  cosmonaut: {fileID: 0}
+  CosmonautPos: {x: 0, y: 0}
+  Ad1: {fileID: 2135019827}
   Damage: 1
+--- !u!114 &519420035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e81f849fccb05d44a76a49e4e38203e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  transitions1: []
+  transitions2: []
+  roomPoses: []
+  LastX: 0
+  LastY: 0
+  ShopChance: 64000000
+  TreasureChance: 64000000
 --- !u!1 &1020377051
 GameObject:
   m_ObjectHideFlags: 0
@@ -1163,6 +1201,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6810219753925594913, guid: 99558a3214ace564b9caafa2a0767ee5, type: 3}
   m_PrefabInstance: {fileID: 1793148845}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2135019827 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6823159552285711302, guid: 99558a3214ace564b9caafa2a0767ee5, type: 3}
+  m_PrefabInstance: {fileID: 1793148845}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7904f29e8564c3642abee0023ff1e1c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &3687303774895119565
 PrefabInstance:
   m_ObjectHideFlags: 0

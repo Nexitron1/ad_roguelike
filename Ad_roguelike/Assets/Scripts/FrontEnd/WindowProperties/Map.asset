@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Map
   m_EditorClassIdentifier: 
   BgSize: {x: 9, y: 9}
-  BgColor: {r: 0.28627452, g: 0.30588236, b: 0.47058827, a: 1}
+  BgColor: {r: 0.28627452, g: 0.30588236, b: 0.47058827, a: 0.7176471}
   DragTabSize: {x: 9, y: 0.25}
   DragTabColor: {r: 1, g: 1, b: 1, a: 1}
   Title: Map

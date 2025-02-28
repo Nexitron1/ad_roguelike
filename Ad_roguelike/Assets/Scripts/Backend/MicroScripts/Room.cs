@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static MapGenerator;
 
 public class Room : MonoBehaviour
 {
@@ -8,40 +9,38 @@ public class Room : MonoBehaviour
     public Sprite[] roomSprites;
     public GameObject roomSpritePrefab;
     public SpriteRenderer roomIcon;
+    RoomTypes myType;
     void Start()
     {
-        
-    }
 
-    public void SpawnRoom()
+    }
+    public void SetRoomIcon()
     {
-        
-        var a = Instantiate(roomSpritePrefab);
-        a.transform.parent = this.transform;
-        a.transform.localPosition = new Vector2(0, 0);
-        roomIcon = a.GetComponent<SpriteRenderer>();
-        roomIcon.sprite = roomSprites[Random.Range(0, roomSprites.Length)];
-        roomIcon.sortingOrder = 2;
-
-        
+        roomIcon = transform.GetChild(0).GetComponent<SpriteRenderer>();
     }
-
-    public void SpawnRoom(int n)
+    public void SetType(RoomTypes type)
     {
-        var a = Instantiate(roomSpritePrefab);
-        a.transform.parent = this.transform;
-        a.transform.localPosition = new Vector2(0, 0);
-        roomIcon = a.GetComponent<SpriteRenderer>();
-        roomIcon.sprite = roomSprites[n];
-        roomIcon.sortingOrder = 2;
+        if (roomIcon == null) SetRoomIcon();
+
+        myType = type;
+        RedactRoomIcon(myType);
     }
 
-    public void RedactRoomIcon(int n)
+    void RedactRoomIcon(RoomTypes n)
     {
-        roomIcon.sprite = roomSprites[n];
+        if (roomIcon == null) SetRoomIcon();
+
+        roomIcon.sprite = roomSprites[(int)n];
+
+        if (n == RoomTypes.Boss)
+            MakeIconRed();
     }
+        
     public void MakeIconRed()
     {
+        if (roomIcon == null) SetRoomIcon();
+
         roomIcon.color = Color.red;
     }
+
 }
