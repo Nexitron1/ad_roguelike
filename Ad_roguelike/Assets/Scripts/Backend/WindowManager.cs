@@ -74,7 +74,10 @@ public class WindowManager : MonoBehaviour
     public static void OpenWindow(Window w)
     {
         if (w != null)
+        {
             w.gameObject.SetActive(true);
+            Up(w);
+        }
         else
         {
             Debug.LogError("w = null");

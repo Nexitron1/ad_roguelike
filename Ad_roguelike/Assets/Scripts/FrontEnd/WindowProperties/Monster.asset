@@ -18,3 +18,4 @@ MonoBehaviour:
   DragTabColor: {r: 1, g: 1, b: 1, a: 1}
   Title: BomBom (Ad)
   Template: {fileID: 8516593470759848351, guid: 9a33c77229d21dc46bf5ccd046fb0de4, type: 3}
+  HasExitKrest: 0

@@ -10,5 +10,6 @@ public class WindowProperties : ScriptableObject
     public Color DragTabColor = Color.white;
     public string Title = "Window";
     public GameObject Template;
+    public bool HasExitKrest = true;
 
 }

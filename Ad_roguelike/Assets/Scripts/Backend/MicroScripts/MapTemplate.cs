@@ -13,6 +13,8 @@ public class MapTemplate : MonoBehaviour
         generator = Camera.main.GetComponent<MapGenerator>();
         generator.ConnectMap(this);
         if (generator != null) RenderMap();
+
+        WindowManager.Up(transform.parent.parent.GetComponent<Window>());
     }
 
     public void RefreshIcons()

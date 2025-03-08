@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class Cuprum : Item
 {
-    //настоящий
-
-    //Всё что выше надо копипастить
     public override void Init()
     {
         character = Camera.main.GetComponent<Character>();
@@ -30,8 +27,6 @@ public class Cuprum : Item
         }
     }
 
-
-
     public override void OnAdStart()
     {
         if(character == null)
@@ -39,16 +34,16 @@ public class Cuprum : Item
 
         switch (rarity) {
             case Rarity.common: 
-                character.SkipTimeByDurationAndPlace(2f, "end");
+                character.SkipTime(2f, TimeSkip.DurationType.absolute, -2f, TimeSkip.PlaceType.absolute);
                 break;
             case Rarity.uncommon:
-                character.SkipTimeByDurationAndPlace(5f, "start");
+                character.SkipTime(5f, TimeSkip.DurationType.absolute, 0f, TimeSkip.PlaceType.absolute);
                 break;
             case Rarity.rare:
-                character.SkipTimeByPercentAndPlace(0.2f, "end");
+                character.SkipTime(0.2f, TimeSkip.DurationType.percent, -0.2f, TimeSkip.PlaceType.percent);
                 break;
             case Rarity.special:
-                character.SkipTimeByPercentAndPlace(0.5f, "start");
+                character.SkipTime(0.5f, TimeSkip.DurationType.percent, 0, TimeSkip.PlaceType.percent);
                 break;
         }
     }
@@ -58,24 +53,12 @@ public class Cuprum : Item
         if (character == null)
             character = Camera.main.GetComponent<Character>();
 
-        switch (rarity)
-        {
-            case Rarity.common:
-
-                break;
-            case Rarity.uncommon:
-                
-                break;
-            case Rarity.rare:
-                
-                break;
-            case Rarity.special:
-                if (character.MaxHealth > 20)
-                {
-                    character.MaxHealth = 20;
-                }
-                if (character.Health > 20) { character.Health = 20; }
-                break;
+        if (rarity == Rarity.special) 
+        { 
+            if (character.MaxHealth > 20)
+            {
+                character.MaxHealth = 20;
+            }
         }
     }
 }

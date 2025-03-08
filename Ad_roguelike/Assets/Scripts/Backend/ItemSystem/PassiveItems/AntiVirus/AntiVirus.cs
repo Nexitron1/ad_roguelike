@@ -27,6 +27,6 @@ public class AntiVirus : Item
                 character.PlusMults(-0.6f, -0.6f);
                 break;
         }
-        character.Health += character.MaxHealth - t;
+        character.Heal(character.MaxHealth - t);
     }
 }

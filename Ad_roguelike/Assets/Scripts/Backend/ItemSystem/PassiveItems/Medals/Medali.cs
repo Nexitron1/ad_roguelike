@@ -24,18 +24,18 @@ public class Medali : Item
         }
     }
 
-    public override void OnActiveArtUsed()
+    public override void OnActiveArtUsed(int index)
     {
         switch (rarity)
         {
             case Rarity.common:
-                character.SkipTimeByDurationAndPlace(0.5f, "now");
+                character.SkipTime(0.5f, TimeSkip.DurationType.absolute, 0, TimeSkip.PlaceType.absolute, false);
                 break;
             case Rarity.uncommon:
-                character.SkipTimeByDurationAndPlace(1f, "now");
+                character.SkipTime(1f, TimeSkip.DurationType.absolute, 0, TimeSkip.PlaceType.absolute, false);
                 break;
             case Rarity.rare:
-                character.SkipTimeByDurationAndPlace(2f, "now");
+                character.SkipTime(2f, TimeSkip.DurationType.absolute, 0, TimeSkip.PlaceType.absolute, false);
                 break;
             case Rarity.special:
                 if (Random(10))

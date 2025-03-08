@@ -7,7 +7,6 @@ public class Movement : MonoBehaviour
 {
     Vector2Int MyPos;
     MapGenerator generator;
-    public bool CanMove = true;
     Animator Cosmonaut;
     Character character;
     
@@ -19,11 +18,12 @@ public class Movement : MonoBehaviour
 
         character.SetMovement(this);
         MyPos = character.CosmonautPos;
+        transform.localPosition = new Vector2(transform.localPosition.x + 245 * MyPos.x, transform.localPosition.y + 245 * MyPos.y);
 
     }
     void Update()
     {
-        if (CanMove)
+        if (character.CanMove)
         {
             if (Input.GetKeyDown(KeyCode.RightArrow))
             {
@@ -73,9 +73,10 @@ public class Movement : MonoBehaviour
                     }
                 }
             }
+
+            character.CosmonautPos = MyPos;
         }
 
-        character.CosmonautPos = MyPos;
     }
 
     bool SearchTransitions(Vector2Int start, Vector2Int end)
@@ -102,10 +103,10 @@ public class Movement : MonoBehaviour
 
     IEnumerator MoveTo(Vector2 endPos)
     {
-        CanMove = false;
+        character.CanMove = false;
         Cosmonaut.SetBool("isRun", true);
         
-        float MovementTime = 0.7f;
+        float MovementTime = 0.4f;
         Vector2 startPos = transform.localPosition;
 
         for (float i = 0; i < 1; i += MovementTime / (40 * MovementTime))
@@ -114,7 +115,7 @@ public class Movement : MonoBehaviour
             yield return new WaitForSeconds(MovementTime / 40);
         }
         transform.localPosition = endPos;
-        CanMove = true;
+        character.CanMove = true;
         Cosmonaut.SetBool("isRun", false);
         transform.localScale = new Vector3(35, 35, 1);
 

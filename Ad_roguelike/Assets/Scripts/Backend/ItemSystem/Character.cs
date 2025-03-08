@@ -1,9 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
+using UnityEngine.UI;
+using static Stats;
 using static UnityEditor.Progress;
 
 public class Character : MonoBehaviour
@@ -13,25 +17,137 @@ public class Character : MonoBehaviour
     public List<ActiveItem> activeItems = new List<ActiveItem>();
     public float TesttimeMultiplier = 1;
     public float sliderPos = 1;
-    public float Health = 50, MaxHealth = 50;
+    private float Health = 50;
+    public float MaxHealth = 50;
     public float MultLeft = 1f, MultRight = 1f;
 
     public MapGenerator generator;
     public Movement cosmonaut;
-    public Vector2Int CosmonautPos = Vector2Int.zero;
+    public Vector2Int CosmonautPos;
 
-    public Icon Ad1;
+    public Icon Ad1, IconMap;
+    public Icon Treasure, Icon_Shop;
+    public float BaseAdLengh = 10;
+    public int stage = 1;
     public float Damage = 1f;
+
+    public float ShopMultiplier = 1;
+    public int ShopAdder = 0;
+    public int money = 0;
+    public List<TimeSkip> TimeSkipsQueue = new List<TimeSkip>(); //
+    public bool CanUseActiveArts = true;
     void Start()
     {
+        StatisticValues = new float[System.Enum.GetNames(typeof(Stats.Statistics)).Length];
         generator = GetComponent<MapGenerator>();
         RecreateItems();
         FirstTimeForItems();
         StartCoroutine(DamageTimer());
     }
+    
+    public void Heal(float hp)
+    {
+        var tmp = Health;
+        Health += hp;
+        if(Health > MaxHealth)
+            Health = MaxHealth;
+
+        tmp = Health - tmp;
+
+        if(tmp < 0)       
+            tmp = 0;
+        
+        AddStats(Statistics.HpHealed, tmp);
+    }
+    public void DeleteItem(int index)
+    {
+        if (index >= 0 && index < items.Count)
+        {
+            items.RemoveAt(index);
+            RefreshInventory();
+
+            ReactivateItems();
+            AddStats(Stats.Statistics.ItemsDeleted, 1);
+        }
+    }
+    List<float> f = new List<float>();
+    public void DeleteActiveItem(int index)
+    {
+        if(index >= 0 && index < activeItems.Count)
+        {
+            activeItems.RemoveAt(index);
+            RefreshHotbar();
+            AddStats(Stats.Statistics.ItemsDeleted, 1);
+        }
+    }
+    void ReactivateItems()
+    {
+        var tmp = MaxHealth;
+        MaxHealth = BaseValues.MaxHealth;
+        //Health += MaxHealth - tmp;
+        MultLeft = BaseValues.MultLeft;
+        MultRight = BaseValues.MultRight;
+        BaseAdLengh = BaseValues.BaseAdLengh;
+        BossTimeAdder = BaseValues.BossTimeAdder;
+        Damage = BaseValues.Damage;
+        ShopMultiplier = BaseValues.ShopMultiplier;
+        ShopAdder = BaseValues.ShopAdder;
+        CanUseActiveArts = BaseValues.CanUseActiveArts;
+        MoneyMultiplier = BaseValues.MoneyMultiplier;
+        MoneyAdder = BaseValues.MoneyAdder;
+        CanRegenerateOnNewStage = BaseValues.CanRegenerateOnNewStage;
+        TimeSkipsQueue = null;
+        TimeSkipsQueue = new List<TimeSkip>();
+
+        generator.ShopChance = new List<int> { 100 };
+        generator.TreasureChance = new List<int> { 100 };
+
+        PlusMults(GetStats(Statistics.FishUsed) * 0.25f, GetStats(Statistics.FishUsed) * 0.25f);
+
+        foreach(Item item in items)
+        {
+            OnFirstTime(item);
+        }
+
+
+
+        if (TimerStarted)
+        {
+            OnAdStarts();
+            endTime = BaseAdLengh + 10 * stage;
+        }
+    }
+    public Stats stats;
+    float[] StatisticValues;
+    public void SetStats(Stats s)
+    {
+        stats = s;
+        for (int i = 0; i < StatisticValues.Length; i++)
+        {
+            stats.Modify(i, StatisticValues[i]);
+        }
+    }
+    public void AddStats(Stats.Statistics s, float value)
+    {
+        StatisticValues[(int)s] += value;
+        if(stats != null)
+        {
+            stats.Modify((int)s, StatisticValues[(int)s]);
+        }
+
+    }
+    public float GetStats(Statistics s)
+    {
+        return StatisticValues[(int)s];
+    }
+    public float GetStats(int s)
+    {
+        return StatisticValues[s];
+    }
     public void SetMovement(Movement m)
     {
         cosmonaut = m;
+
     } 
     public void PlusMults(float left, float right)
     {
@@ -61,6 +177,39 @@ public class Character : MonoBehaviour
                 inventory.AddItem(item.ItemType);
         }
     }
+    public void RefreshInventory()
+    {
+        if(inventory != null)
+        {
+            inventory.RefreshIcons();
+            inventory.items = new Item[18];
+            inventory.itemsCount = 0;
+            foreach (Item item in items)
+                inventory.AddItem(item.ItemType);
+            inventory.SelectItem(0);
+        }
+        else
+        {
+            Debug.LogWarning("InventoryIsNull but it's okay");
+        }
+    }
+    public void RefreshHotbar()
+    {
+        if(hotbar != null)
+        {
+            hotbar.Refresh();
+            hotbar.items.Clear();
+            foreach (ActiveItem actItem in activeItems)
+            {
+                hotbar.AddItem(actItem.ItemType);
+            }
+        }
+        else
+        {
+            Debug.LogWarning("HotbarIsNull but it's okay");
+        }
+    }
+
     Hotbar hotbar;
     public void HotbarSet(Hotbar _hotbar)
     {
@@ -103,6 +252,10 @@ public class Character : MonoBehaviour
             }
         }
     }
+    public MapGenerator.RoomTypes GetRoomType()
+    {
+        return generator.rooms[CosmonautPos];
+    }
     void FirstTimeForItems()
     {
         foreach (Item item in items)
@@ -111,7 +264,7 @@ public class Character : MonoBehaviour
             
         }
     }
-
+    public float BossTimeAdder;
     public void RoomEntry(MapGenerator.RoomTypes roomType)
     {
         OnRoomEnter();
@@ -119,12 +272,17 @@ public class Character : MonoBehaviour
         {
             case MapGenerator.RoomTypes.Fight:
                 Ad1.StartApp();
+                StartTimer(BaseAdLengh + 10 * stage);
                 break;
             case MapGenerator.RoomTypes.Boss:
+                Ad1.StartApp();
+                StartTimer(BaseAdLengh + 10 * stage + BossTimeAdder);
                 break;
             case MapGenerator.RoomTypes.Shop:
+                Icon_Shop.StartApp();
                 break;
             case MapGenerator.RoomTypes.Treasure:
+                Treasure.StartApp();
                 break;
         }
     }
@@ -132,6 +290,10 @@ public class Character : MonoBehaviour
     {
         
         if (Health > MaxHealth) Health = MaxHealth;
+        if (Health <= 0)
+        {
+            //Debug.Log("Всё, ты умер");
+        }
         if (ad != null)
         {
             ad.TimerSecondsText.text = time.ToString("0");
@@ -156,62 +318,99 @@ public class Character : MonoBehaviour
     }
 
 
-
-    float time = 0, endTime = 0;
-    Ad ad = null;
-
-
+    public float time = 0, endTime = 0;
+    public Ad ad = null;
 
     bool canBeDamaged = false;
     bool endlessTimer = true;
-    public void StartTimer(Ad _ad, float Duration)
+    public void StartTimer(float Duration)
     {
-        if (ad == null)
+        endTime += Duration;
+        StartCoroutine(Timer());
+    }
+    public void ClearRoom()
+    {
+        if (generator != null)
         {
-            ad = _ad;
-            endTime = Duration;
-            StartCoroutine(Timer());
+            generator.rooms[CosmonautPos] = MapGenerator.RoomTypes.Empty;
+            generator.RefreshIcons();
         }
     }
 
+    public void SetRoom(MapGenerator.RoomTypes type)
+    {
+        generator.rooms[CosmonautPos] = type;
+        generator.RefreshIcons();
+        RoomEntry(type);
+    }
+
+    public bool TryAddItem()
+    {
+        if(items.Count < 18)
+        {
+            return true;
+        }
+        return false;
+    }
     public void AddItem(Item item, Item.Rarity rarity)
     {
-        items.Add(Instantiate(item));
-        items[items.Count - 1].SetCharacter(this);
-        items[items.Count - 1].SetFunctional(rarity);
-        OnFirstTime(item);
+        if (items.Count < 18)
+        {
+            items.Add(Instantiate(item));
+            items[items.Count - 1].SetCharacter(this);
+            items[items.Count - 1].SetFunctional(rarity);
+            OnFirstTime(items[items.Count - 1]);
+            RefreshInventory();
+        }
+        else
+        {
+            Debug.LogError("Reached limit of items");
+        }
+    }
+    public void AddItem(Item item)
+    {
+        if (items.Count < 18)
+        {
+            items.Add(Instantiate(item));
+            items[items.Count - 1].SetCharacter(this);
+            items[items.Count - 1].SetFunctional(item.rarity);
+            OnFirstTime(items[items.Count - 1]);
+            RefreshInventory();
+        }
+        else
+        {
+            Debug.LogError("Reached limit of items");
+        }
     }
 
-    public void SkipTimeByDurationAndPlace(float duration, string place)
+
+    public bool TryAddActiveItem()
     {
-        if(place == "start")
+        if (activeItems.Count < 2)
         {
-            if (time < duration)
-                time = duration;
+            return true;
         }
-        else if(place == "end")
+        return false;
+    }
+    public void AddActiveItem(ActiveItem item)
+    {
+        if(activeItems.Count < 2)
         {
-            endTime -= duration; 
+            activeItems.Add(Instantiate(item));
+            activeItems[activeItems.Count - 1].SetCharacter(this);
+            activeItems[activeItems.Count - 1].SetFunctional();
+            RefreshHotbar();
         }
-        else if (place == "now")
+        else
         {
-            time += duration;
+            Debug.LogError("Reached limit of ActiveItems");
         }
     }
-    public void SkipTimeByPercentAndPlace(float percent, string place)
+
+
+    public void SkipTime(float duration, TimeSkip.DurationType dt, float place, TimeSkip.PlaceType pt, bool cond = true)
     {
-        if (place == "start")
-        {
-            time += (endTime - time) * percent;
-        }
-        else if (place == "end")
-        {
-            endTime -= endTime * percent;
-        }
-        else if  (place == "now")
-        {
-            time += percent * endTime;
-        }
+        TimeSkipsQueue.Add(new TimeSkip(duration, dt, place, pt, cond));
     }
     bool TimerStarted = false, skipAd = false;
     IEnumerator Timer()
@@ -223,14 +422,16 @@ public class Character : MonoBehaviour
             OnAdStarts();
             yield return null;
             float sec = 0;
+
+
             while (time < endTime && !skipAd)
             {
-                if (time < endTime / 2)
+                if (time < endTime / 2)//первая половина
                 {
                     yield return new WaitForSeconds(TesttimeMultiplier / MultLeft);
                     time += TesttimeMultiplier;
                 }
-                else
+                else//вторая
                 {
                     yield return new WaitForSeconds(TesttimeMultiplier / MultRight);
                     time += TesttimeMultiplier;
@@ -242,9 +443,13 @@ public class Character : MonoBehaviour
                     OnEachSec();
                     sec = 0;
                 }
+
+                float skip = TimeSkipMax();
+                time += skip;
             }
+
+
             canBeDamaged = false;
-            OnFightEnd();
             time = 0;
             if (ad != null)
             {
@@ -254,9 +459,236 @@ public class Character : MonoBehaviour
             ad = null;
             skipAd = false;
             TimerStarted = false;
+            
+            OnFightEnd();
         }
     }
 
+    private float TimeSkipMax()
+    {
+        List<float> tmp_time = new List<float>();
+
+        for (int l = TimeSkipsQueue.Count - 1; l >= 0; l--)
+        {
+            var t = TimeSkipsQueue[l];
+            if (t.conditional)
+            {
+                if (t.durationType == TimeSkip.DurationType.absolute)
+                {
+                    if (t.placeType == TimeSkip.PlaceType.absolute)
+                    {
+                        if (t.place > 0)
+                        {
+                            if (time >= t.place)
+                            {
+                                if (time >= t.place + t.duration)
+                                {
+                                    TimeSkipsQueue.Remove(t);
+                                }
+                                else
+                                {
+                                    tmp_time.Add(t.duration);
+                                    TimeSkipsQueue.Remove(t);
+                                }
+                            }
+                        }
+                        else if (t.place < 0)
+                        {
+                            if (time >= endTime + t.place)
+                            {
+                                if (time >= endTime + t.place + t.duration)
+                                {
+                                    TimeSkipsQueue.Remove(t);
+                                }
+                                else
+                                {
+                                    tmp_time.Add(t.duration);
+                                    TimeSkipsQueue.Remove(t);
+                                }
+                            }
+                        }
+                        else if (t.place == 0)
+                        {
+                            if (time >= t.place + t.duration)
+                            {
+                                TimeSkipsQueue.Remove(t);
+                            }
+                            else
+                            {
+                                tmp_time.Add(t.duration);
+                                TimeSkipsQueue.Remove(t);
+                            }
+                        }
+                    }
+                    else if (t.placeType == TimeSkip.PlaceType.percent)
+                    {
+                        if (t.place > 0)
+                        {
+                            if (time >= t.place * endTime)
+                            {
+                                if (time >= t.place * endTime + t.duration)
+                                {
+                                    TimeSkipsQueue.Remove(t);
+                                }
+                                else
+                                {
+                                    tmp_time.Add(t.duration);
+                                    TimeSkipsQueue.Remove(t);
+                                }
+                            }
+                        }
+                        else if (t.place < 0)
+                        {
+                            if (time >= endTime + t.place * endTime)
+                            {
+                                if (time >= endTime + t.place * endTime + t.duration)
+                                {
+                                    TimeSkipsQueue.Remove(t);
+                                }
+                                else
+                                {
+                                    tmp_time.Add(t.duration);
+                                    TimeSkipsQueue.Remove(t);
+                                }
+                            }
+                        }
+                        else if (t.place == 0)
+                        {
+                            if (time >= t.place * endTime + t.duration)
+                            {
+                                TimeSkipsQueue.Remove(t);
+                            }
+                            else
+                            {
+                                tmp_time.Add(t.duration);
+                                TimeSkipsQueue.Remove(t);
+                            }
+                        }
+                    }
+                }
+                else if (t.durationType == TimeSkip.DurationType.percent)
+                {
+                    if (t.placeType == TimeSkip.PlaceType.absolute)
+                    {
+                        if (t.place > 0)
+                        {
+                            if (time >= t.place)
+                            {
+                                if (time >= t.place + t.duration * endTime)
+                                {
+                                    TimeSkipsQueue.Remove(t);
+                                }
+                                else
+                                {
+                                    tmp_time.Add(t.duration * endTime);
+                                    TimeSkipsQueue.Remove(t);
+                                }
+                            }
+                        }
+                        else if (t.place < 0)
+                        {
+                            if (time >= endTime + t.place)
+                            {
+                                if (time >= endTime + t.place + t.duration * endTime)
+                                {
+                                    TimeSkipsQueue.Remove(t);
+                                }
+                                else
+                                {
+                                    tmp_time.Add(t.duration * endTime);
+                                    TimeSkipsQueue.Remove(t);
+                                }
+                            }
+                        }
+                        else if (t.place == 0)
+                        {
+                            if (time >= t.place + t.duration * endTime)
+                            {
+                                TimeSkipsQueue.Remove(t);
+                            }
+                            else
+                            {
+                                tmp_time.Add(t.duration * endTime);
+                                TimeSkipsQueue.Remove(t);
+                            }
+                        }
+                    }
+                    else if (t.placeType == TimeSkip.PlaceType.percent)
+                    {
+                        if (t.place > 0)
+                        {
+                            if (time >= t.place * endTime)
+                            {
+                                if (time >= t.place * endTime + t.duration * endTime)
+                                {
+                                    TimeSkipsQueue.Remove(t);
+                                }
+                                else
+                                {
+                                    tmp_time.Add(t.duration * endTime);
+                                    TimeSkipsQueue.Remove(t);
+                                }
+                            }
+                        }
+                        else if (t.place < 0)
+                        {
+                            if (time >= endTime + t.place * endTime)
+                            {
+                                if (time >= endTime + t.place * endTime + t.duration * endTime)
+                                {
+                                    TimeSkipsQueue.Remove(t);
+                                }
+                                else
+                                {
+                                    tmp_time.Add(t.duration * endTime);
+                                    TimeSkipsQueue.Remove(t);
+                                }
+                            }
+                        }
+                        else if (t.place == 0)
+                        {
+                            if (time >= t.place * endTime)
+                            {
+                                if (time >= t.place * endTime + t.duration * endTime)
+                                {
+                                    TimeSkipsQueue.Remove(t);
+                                }
+                                else
+                                {
+                                    tmp_time.Add(t.duration * endTime);
+                                    TimeSkipsQueue.Remove(t);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (t.durationType == TimeSkip.DurationType.absolute)
+                {
+                    tmp_time.Add(t.duration);
+                    TimeSkipsQueue.Remove(t);
+                }
+                else if(t.durationType == TimeSkip.DurationType.percent)
+                {
+                    tmp_time.Add(t.duration * endTime);
+                    TimeSkipsQueue.Remove(t);
+                }
+            }
+        }
+
+        float skip = 0;
+        for (int i = 0; i < tmp_time.Count; i++)
+        {
+            if (tmp_time[i] > skip)
+            {
+                skip = tmp_time[i];
+            }
+        }
+        //Debug.Log("skip = " + skip);
+        return skip;
+    }
 
     IEnumerator DamageTimer()
     {
@@ -275,40 +707,74 @@ public class Character : MonoBehaviour
         
     }
 
-
-
-
-
-
-
-
-    public void OnActiveArtUsed()
+    public void OnActiveArtUsed(int index)
     {
         foreach(Item item in items)
         {
-            item.ItemType.OnActiveArtUsed();
+            item.ItemType.OnActiveArtUsed(index);
         }
     }
     public void OnEachSec()
     {
+        AddStats(Stats.Statistics.Waiting, 1);
         foreach (Item item in items) 
         {
             item.ItemType.OnEachSec();
         }
     }
+    public bool CanMove = true;
+    public float MoneyMultiplier = 0.5f, MoneyAdder = 0;
+    public bool CanRegenerateOnNewStage = true;
+
+    public bool CanBuyItems = true;
+
     public void OnFightEnd()
     {
-        if (cosmonaut != null)
-            cosmonaut.CanMove = true;
+        money += (int)(endTime * MoneyMultiplier + MoneyAdder);
+        AddStats(Stats.Statistics.MoneyRecived, (int)(endTime * MoneyMultiplier + MoneyAdder));
+        endTime = 0;
+        CanMove = true;
         if (generator != null)
         {
-            generator.rooms[CosmonautPos] = MapGenerator.RoomTypes.Empty;
-            generator.RefreshIcons();
+            if (generator.rooms[CosmonautPos] == MapGenerator.RoomTypes.Boss)
+            {
+                stage += 1;
+                CosmonautPos = Vector2Int.zero;
+                OnNewStage();
+                generator.ReConnect();
+                generator.ClearArrays();
+                generator.GenerateMap();
+                IconMap.StartApp();
+                if (CanRegenerateOnNewStage)
+                {
+                    Health = MaxHealth;
+                }
+                foreach (ActiveItem activeItem in activeItems)
+                {
+                    activeItem.ItemType.OnNewStage();
+                }
+
+
+            }
+            else
+            {
+                generator.rooms[CosmonautPos] = MapGenerator.RoomTypes.Empty;
+                generator.RefreshIcons();
+            }
+
+            
         }
+
         foreach (Item item in items)
         {
             item.ItemType.OnFightEnd();
         }
+        foreach(ActiveItem activeItem in activeItems)
+        {
+            activeItem.ItemType.OnFightEnd();
+        }
+
+        AddStats(Stats.Statistics.AdWatched, 1);
     }
     public void OnFirstTime(Item item)
     {
@@ -323,13 +789,58 @@ public class Character : MonoBehaviour
     }
     public void OnAdStarts()
     {
-        if (cosmonaut != null)
-            cosmonaut.CanMove = false;
+        CanMove = false;
         foreach (Item item in items)
         {
             item.ItemType.OnAdStart();
         }
     }
+    public void OnNewStage()
+    {
+        foreach(ActiveItem activeItem in activeItems)
+        {
+            activeItem.OnNewStage();
+        }
+        foreach(Item item in items)
+        {
+            item.ItemType.OnNewStage();
+        }
+    }
 
     
 }
+
+
+public class TimeSkip
+{
+    public readonly float duration;
+    public readonly float place;
+    public readonly DurationType durationType;
+    public readonly PlaceType placeType;
+    public readonly bool conditional = true;
+    
+    public enum PlaceType
+    {
+        absolute,
+        percent
+    }
+
+    public enum DurationType
+    {
+        absolute,
+        percent
+    }
+
+    public TimeSkip(float duration, DurationType dt, float place, PlaceType pt, bool conditional = true)
+    {
+        this.duration = duration;
+        this.place = place;
+        this.durationType = dt;
+        this.placeType = pt;
+        this.conditional = conditional;
+    }
+}
+
+
+
+//Софтлок когда закрываешь карту во время движения

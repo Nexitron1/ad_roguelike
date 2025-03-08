@@ -7,11 +7,14 @@ public class Ad : MonoBehaviour
 {
     public TMP_Text TimerSecondsText, M1Text, M2Text, MaxHp, DurationTime;
     public Slider hp, Duration;
+    public Sprite[] adSprites;
+    public Image ad;
     Character character;
     void Start()
     {
         character = Camera.main.GetComponent<Character>();
-        character.StartTimer(this, 20f);
+        character.ad = this;
+        ad.sprite = adSprites[Random.Range(0, adSprites.Length)];
     }
     void Update()
     {

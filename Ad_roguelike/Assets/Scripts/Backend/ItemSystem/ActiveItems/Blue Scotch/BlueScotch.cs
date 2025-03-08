@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class BlueScotch : ActiveItem
 {
-    public override void OnActivate()
+    public override void Activate()
     {
-        character.Health += 5;
+        character.Heal(5);
     }
 }

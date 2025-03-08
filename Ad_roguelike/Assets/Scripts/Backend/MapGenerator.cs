@@ -25,13 +25,26 @@ public class MapGenerator : MonoBehaviour
 
     private void Start()
     {
+        ClearArrays();
+        GenerateMap();
+
+    }
+
+    public void ClearArrays()
+    {
         rooms.Clear();
         transitions1.Clear();
         transitions2.Clear();
         roomPoses.Clear();
-
-        GenerateMap();
-
+        LastX = 0;
+        LastY = 0;
+    }
+    public void ReConnect()
+    {
+        if(mapTemplate != null)
+        {
+            mapTemplate.transform.parent.parent.GetComponent<Window>().CloseWindow();
+        }
     }
     public void ConnectMap(MapTemplate template)
     {
@@ -40,7 +53,8 @@ public class MapGenerator : MonoBehaviour
 
     public void RefreshIcons()
     {
-        mapTemplate.RefreshIcons();
+        if (mapTemplate != null)
+            mapTemplate.RefreshIcons();
     }
     public void GenerateMap()
     {

@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class BlackScotch : ActiveItem
 {
-    public override void OnActivate()
+    public override void Activate()
     {
-        character.Health *= 1.05f;
+        character.Heal(character.MaxHealth * 0.1f);
     }
 }

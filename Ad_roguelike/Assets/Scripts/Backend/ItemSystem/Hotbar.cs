@@ -1,16 +1,18 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 public class Hotbar : MonoBehaviour
 {
     Character character;
     [SerializeField] Transform[] slots = new Transform[2];
     [SerializeField] TMP_Text[] Names, Descs;
-    List<ActiveItem> items = new List<ActiveItem>();
-
+    [SerializeField] TMP_Text[] Times;
+    public List<ActiveItem> items = new List<ActiveItem>();
+    public Sprite EmptyIcon;
     private void Start()
     {
         character = Camera.main.GetComponent<Character>();
@@ -20,11 +22,41 @@ public class Hotbar : MonoBehaviour
             slots[i].GetChild(0).GetComponent<ActIcons>().id = i;
         }
     }
+    private void Update()
+    {
+        for (int i = 0; i < items.Count; i++)
+        {
+            if (items[i].myType != ActiveItem.Type.Infinite)
+            {
+                Times[i].text = items[i].UsesLeft.ToString() + " / " + items[i].MaxUses.ToString();
+                Times[i].transform.parent.GetComponent<Image>().color = Color.Lerp(Color.red, Color.green, (float)items[i].UsesLeft / (float)items[i].MaxUses);
+            }
+            else
+            {
+                Times[i].text = items[i].TotalTimesUsed.ToString() + " / ∞";
+                Times[i].transform.parent.GetComponent<Image>().color = Color.green;
+            }
+        }
+    }
+    public void Refresh()
+    {
+        slots[0].GetChild(0).GetComponent<Image>().sprite = EmptyIcon;
+        Names[0].text = "";
+        Descs[0].text = "";
 
+        slots[1].GetChild(0).GetComponent<Image>().sprite = EmptyIcon;
+        Names[1].text = "";
+        Descs[1].text = "";
 
+        Times[0].text = "";
+        Times[0].transform.parent.GetComponent<Image>().color = Color.red;
+
+        Times[1].text = "";
+        Times[1].transform.parent.GetComponent<Image>().color = Color.red;
+    }
     public void AddItem(ActiveItem item)
     {
-        if(items.Count < 2)
+        if(character.TryAddItem())
         {
             items.Add(item);
             slots[items.Count - 1].GetChild(0).GetComponent<Image>().sprite = item.largeIcon;
@@ -39,8 +71,11 @@ public class Hotbar : MonoBehaviour
 
     public void ActivateItem(int id)
     {
-        items[id].OnActivate();
-        character.OnActiveArtUsed();
+        if (id < items.Count)
+        {
+            items[id].OnActivate();
+            character.OnActiveArtUsed(id);
+        }
     }
 
 }

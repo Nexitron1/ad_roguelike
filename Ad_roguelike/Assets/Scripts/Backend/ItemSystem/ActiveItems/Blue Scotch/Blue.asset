@@ -19,3 +19,6 @@ MonoBehaviour:
   description: "\u041B\u0435\u0447\u0438\u0442 5 \u0445\u043F"
   functional: 0
   ItemType: {fileID: 0}
+  myType: 1
+  UsesLeft: 1
+  MaxUses: 1

@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 011fa928ab8ab224db29034f70952eb3, type: 3}
+  m_Name: Furnace
+  m_EditorClassIdentifier: 
+  character: {fileID: 0}
+  itemName: 
+  icon: {fileID: 0}
+  largeIcon: {fileID: 0}
+  descriptions: []
+  functional: 0
+  ItemType: {fileID: 0}
+  rarity: 0

@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08fda71e81b8f7640bb7ddb22578a68a, type: 3}
+  m_Name: Fish
+  m_EditorClassIdentifier: 
+  character: {fileID: 0}
+  itemName: "\u043F\u043E\u0441\u043B\u0435\u0434\u043D\u044B\u0439 \u0430\u043D\u0447\u043E\u0443\u0441"
+  icon: {fileID: -1803345359, guid: 6ad166e17c441cb408b6d3ab70290e75, type: 3}
+  largeIcon: {fileID: -831422521, guid: 5df8c40205151ca44bff32935485dbc3, type: 3}
+  description: "\u0434\u043E\u0431\u0430\u0432\u043B\u044F\u0435\u0442 5 \u0441\u0435\u043A\u0443\u043D\u0434
+    \u043A \u0434\u043B\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u0438
+    \u0440\u0435\u043A\u043B\u0430\u043C\u044B \u0438 \u0443\u0441\u043A\u043E\u0440\u044F\u0435\u0442
+    \u0432\u0440\u0435\u043C\u044F \u043D\u0430 +0.25"
+  functional: 8
+  ItemType: {fileID: 0}
+  myType: 1
+  UsesLeft: 1
+  MaxUses: 1
+  TotalTimesUsed: 0

@@ -11,10 +11,12 @@ public class Window : MonoBehaviour {
     public Vector3 mouse, offset;
     public Icon MyIcon;
     public MiniIcon MyMiniIcon;
+    public GameObject Krest;
 
     private void Start()
     {
-        
+        if(!windowProperties.HasExitKrest)
+            Krest.SetActive(false);
     }
     private void Update()
     {

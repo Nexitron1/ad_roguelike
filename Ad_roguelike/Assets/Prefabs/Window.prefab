@@ -545,6 +545,9 @@ MonoBehaviour:
   isHolded: 0
   mouse: {x: 0, y: 0, z: 0}
   offset: {x: 0, y: 0, z: 0}
+  MyIcon: {fileID: 0}
+  MyMiniIcon: {fileID: 0}
+  Krest: {fileID: 4961697751087160467}
 --- !u!1 &5965063425664041032
 GameObject:
   m_ObjectHideFlags: 0

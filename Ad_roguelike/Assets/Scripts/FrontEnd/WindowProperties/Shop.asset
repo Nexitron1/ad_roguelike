@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9111be60ae2e5a42937b2b79ee79027, type: 3}
+  m_Name: Shop
+  m_EditorClassIdentifier: 
+  BgSize: {x: 10.5, y: 6.9}
+  BgColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  DragTabSize: {x: 10.5, y: 0.25}
+  DragTabColor: {r: 1, g: 1, b: 1, a: 1}
+  Title: Shop
+  Template: {fileID: 7380107263509763316, guid: f61e905c42e9c38488b3e71895226b86, type: 3}
+  HasExitKrest: 0
