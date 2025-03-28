@@ -10,6 +10,8 @@ public class Ad : MonoBehaviour
     public Sprite[] adSprites;
     public Image ad;
     Character character;
+
+    
     void Start()
     {
         character = Camera.main.GetComponent<Character>();

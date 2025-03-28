@@ -1,20 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
-using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using static Stats;
-using static UnityEditor.Progress;
 
 public class Character : MonoBehaviour
 {
     public Item.Rarity[] TestRarity;
     public List<Item> items = new List<Item>();
     public List<ActiveItem> activeItems = new List<ActiveItem>();
+    public AdFeature.Difficulty[] TestDifficulty;
+    public List<AdFeature> AdFeatures = new List<AdFeature>();
     public float TesttimeMultiplier = 1;
     public float sliderPos = 1;
     private float Health = 50;
@@ -36,13 +32,27 @@ public class Character : MonoBehaviour
     public int money = 0;
     public List<TimeSkip> TimeSkipsQueue = new List<TimeSkip>(); //
     public bool CanUseActiveArts = true;
+
+    
     void Start()
     {
         StatisticValues = new float[System.Enum.GetNames(typeof(Stats.Statistics)).Length];
         generator = GetComponent<MapGenerator>();
         RecreateItems();
         FirstTimeForItems();
+
+        for (int i = 0; i < AdFeatures.Count; i++)
+        {
+            if (AdFeatures[i] != null)
+            {
+                AdFeature.Difficulty d = TestDifficulty[i];
+                AdFeatures[i] = GetComponent<ItemsHolder>().CreateAdFeature(AdFeatures[i].myType, d);
+                AdFeatures[i].InitType(d);
+            }
+        }
+
         StartCoroutine(DamageTimer());
+
     }
     
     public void Heal(float hp)
@@ -107,6 +117,10 @@ public class Character : MonoBehaviour
         foreach(Item item in items)
         {
             OnFirstTime(item);
+        }
+        for (int i = 0; i < AdFeatures.Count; i++)
+        {
+            AdFeatures[i].Init();
         }
 
 
@@ -280,6 +294,7 @@ public class Character : MonoBehaviour
                 break;
             case MapGenerator.RoomTypes.Shop:
                 Icon_Shop.StartApp();
+                CanMove = false;
                 break;
             case MapGenerator.RoomTypes.Treasure:
                 Treasure.StartApp();
@@ -293,6 +308,7 @@ public class Character : MonoBehaviour
         if (Health <= 0)
         {
             //Debug.Log("Всё, ты умер");
+            SceneManager.LoadScene(2);
         }
         if (ad != null)
         {
@@ -312,6 +328,11 @@ public class Character : MonoBehaviour
         foreach (Item item in items)
         {
             item.ItemType.OnEachFrame();
+        }
+
+        if (stage >= 4)
+        {
+            SceneManager.LoadScene(1);
         }
 
 
@@ -412,7 +433,18 @@ public class Character : MonoBehaviour
     {
         TimeSkipsQueue.Add(new TimeSkip(duration, dt, place, pt, cond));
     }
+    public void DenyTime(float duration, bool percent = false)
+    {
+        if (!percent)
+            time -= duration;
+        else
+            time -= duration * endTime;
+    } 
     bool TimerStarted = false, skipAd = false;
+    int AdFeaturesCount()
+    {
+        return 0;
+    }
     IEnumerator Timer()
     {
         if (TimerStarted == false)
@@ -423,6 +455,17 @@ public class Character : MonoBehaviour
             yield return null;
             float sec = 0;
 
+            AdFeatures.Clear();
+            var tmp1 = AdFeaturesCount();
+            for (int i = 0; i < tmp1; i++)
+            {
+                AdFeatures.Add(GetComponent<ItemsHolder>().CreateAdFeature());
+            }
+            
+            for (int i = 0; i < AdFeatures.Count; i++)
+            {
+                AdFeatures[i].Init();
+            }
 
             while (time < endTime && !skipAd)
             {
@@ -681,6 +724,12 @@ public class Character : MonoBehaviour
         float skip = 0;
         for (int i = 0; i < tmp_time.Count; i++)
         {
+            if(i == 0)
+            {
+                skip = tmp_time[i];
+                continue;
+            }
+
             if (tmp_time[i] > skip)
             {
                 skip = tmp_time[i];
@@ -692,12 +741,19 @@ public class Character : MonoBehaviour
 
     IEnumerator DamageTimer()
     {
+        float DamageTime = 0;
         while (endlessTimer)
         {
             if (canBeDamaged)
             {
-                yield return new WaitForSeconds(1);
-                Health -= Damage;
+                yield return new WaitForSeconds(TesttimeMultiplier);
+                DamageTime += TesttimeMultiplier;
+                if (DamageTime > 1)
+                {
+                    Health -= Damage;
+                    DamageTime = 0;
+                }
+                
             }
             else
             {
@@ -713,6 +769,10 @@ public class Character : MonoBehaviour
         {
             item.ItemType.OnActiveArtUsed(index);
         }
+        for (int i = 0; i < AdFeatures.Count; i++)
+        {
+            AdFeatures[i].OnActiveArtUsed(index);
+        }
     }
     public void OnEachSec()
     {
@@ -720,6 +780,10 @@ public class Character : MonoBehaviour
         foreach (Item item in items) 
         {
             item.ItemType.OnEachSec();
+        }
+        for (int i = 0; i < AdFeatures.Count; i++)
+        {
+            AdFeatures[i].OnEachSec();
         }
     }
     public bool CanMove = true;
@@ -734,6 +798,7 @@ public class Character : MonoBehaviour
         AddStats(Stats.Statistics.MoneyRecived, (int)(endTime * MoneyMultiplier + MoneyAdder));
         endTime = 0;
         CanMove = true;
+        AdFeatures.Clear();
         if (generator != null)
         {
             if (generator.rooms[CosmonautPos] == MapGenerator.RoomTypes.Boss)

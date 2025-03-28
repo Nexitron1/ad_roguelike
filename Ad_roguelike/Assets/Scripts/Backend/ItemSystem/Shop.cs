@@ -117,7 +117,7 @@ public class Shop : MonoBehaviour
 
 
         }
-        else if(z == 3)
+        else if (z == 3)
         {
             ActPass.text = "активный предмет";
             Name.text = ActiveItems[0].itemName;
@@ -128,6 +128,30 @@ public class Shop : MonoBehaviour
             Bad.transform.parent.gameObject.SetActive(false);
             Desc.transform.parent.gameObject.SetActive(true);
         }
+        else if (z == 4) 
+        {
+            ActPass.text = "Улучшение";
+            Name.text = "Снеки";
+            Name.transform.parent.GetComponent<Image>().color = Color.black;
+            Desc.text = "Восстанавливает 13 ХП";
+
+            Good.transform.parent.gameObject.SetActive(false);
+            Bad.transform.parent.gameObject.SetActive(false);
+            Desc.transform.parent.gameObject.SetActive(true);
+        }
+        else if (z == 5)
+        {
+            ActPass.text = "Улучшение";
+            Name.text = "Стимулятор ХП";
+            Name.transform.parent.GetComponent<Image>().color = Color.black;
+            Desc.text = "Увеличение максимального количества ХП на 25%";
+
+            Good.transform.parent.gameObject.SetActive(false);
+            Bad.transform.parent.gameObject.SetActive(false);
+            Desc.transform.parent.gameObject.SetActive(true);
+
+        }
+
     }
     public void Buy()
     {
@@ -192,7 +216,8 @@ public class Shop : MonoBehaviour
     public void Exit()
     {
         transform.parent.parent.GetComponent<Window>().CloseWindow();
-        //ch.ClearRoom();
+        ch.ClearRoom();
+        ch.CanMove = true;
     }
     void Start()
     {

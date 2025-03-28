@@ -7,6 +7,7 @@ public class ItemsHolder : MonoBehaviour
 {
     public Item[] Items;
     public ActiveItem[] ActiveItems;
+    public AdFeature[] AdFeatures;
     public Color[] rarityColors;
 
     public Item CreateItem()
@@ -45,6 +46,71 @@ public class ItemsHolder : MonoBehaviour
         return item;
     }
 
+    public AdFeature CreateAdFeature()
+    {
+        AdFeature feature;
+        int r = Random.Range(0, AdFeatures.Length);
+        feature = AdFeature.CreateFeature(AdFeatures[r].myType);
+        feature.myType = AdFeatures[r].myType;
+        feature.myDiff = GetDiff();
+        feature.AdName = AdFeatures[r].AdName;
+        feature.diffDescs = AdFeatures[r].diffDescs;
+        return feature;
+
+    }
+    public AdFeature CreateAdFeature(AdFeature.AdType t)
+    {
+        AdFeature feature;
+        int r = -1;
+        for (int i = 0; i < AdFeatures.Length; i++)
+        {
+            if (t == AdFeatures[i].myType)
+            {
+                r = i; 
+                break;
+            }
+        }
+        feature = AdFeature.CreateFeature(AdFeatures[r].myType);
+        feature.myType = AdFeatures[r].myType;
+        feature.myDiff = GetDiff();
+        feature.AdName = AdFeatures[r].AdName;
+        feature.diffDescs = AdFeatures[r].diffDescs;
+        return feature;
+    }
+    public AdFeature CreateAdFeature(AdFeature.AdType t, AdFeature.Difficulty d)
+    {
+        AdFeature feature;
+        int r = -1;
+        for (int i = 0; i < AdFeatures.Length; i++)
+        {
+            if (t == AdFeatures[i].myType)
+            {
+                r = i;
+                break;
+            }
+        }
+        feature = AdFeature.CreateFeature(AdFeatures[r].myType);
+        feature.myType = AdFeatures[r].myType;
+        feature.myDiff = d;
+        feature.AdName = AdFeatures[r].AdName;
+        feature.diffDescs = AdFeatures[r].diffDescs;
+        return feature;
+    }
+    public AdFeature CreateAdFeature(AdFeature.Difficulty d)
+    {
+        AdFeature feature;
+        int r = Random.Range(0, AdFeatures.Length);
+        feature = AdFeature.CreateFeature(AdFeatures[r].myType);
+        feature.myType = AdFeatures[r].myType;
+        feature.myDiff = d;
+        feature.AdName = AdFeatures[r].AdName;
+        feature.diffDescs = AdFeatures[r].diffDescs;
+        return feature;
+
+    }
+
+
+
     Item.Rarity GetRarity()
     {
         int r = Random.Range(0, 100);
@@ -58,5 +124,18 @@ public class ItemsHolder : MonoBehaviour
             return Item.Rarity.uncommon;
 
         return Item.Rarity.common;
+    }
+    AdFeature.Difficulty GetDiff()
+    {
+        int r = Random.Range(0, 100);
+
+        if (r < 5)
+            return AdFeature.Difficulty.extreme;
+        if (r < 5 + 15)
+            return AdFeature.Difficulty.hard;
+        if (r < 5 + 15 + 35)
+            return AdFeature.Difficulty.normal;
+
+        return AdFeature.Difficulty.easy;
     }
 }

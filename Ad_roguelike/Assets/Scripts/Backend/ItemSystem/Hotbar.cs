@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.Progress;
+
 
 public class Hotbar : MonoBehaviour
 {
@@ -56,7 +56,7 @@ public class Hotbar : MonoBehaviour
     }
     public void AddItem(ActiveItem item)
     {
-        if(character.TryAddItem())
+        if(items.Count < 2)
         {
             items.Add(item);
             slots[items.Count - 1].GetChild(0).GetComponent<Image>().sprite = item.largeIcon;
