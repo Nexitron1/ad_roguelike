@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using static Stats;
@@ -13,8 +15,9 @@ public class Character : MonoBehaviour
     public List<AdFeature> AdFeatures = new List<AdFeature>();
     public float TesttimeMultiplier = 1;
     public float sliderPos = 1;
-    private float Health = 50;
+    public float Health { get; private set; } = 50;
     public float MaxHealth = 50;
+    public float OverHealth = 0;
     public float MultLeft = 1f, MultRight = 1f;
 
     public MapGenerator generator;
@@ -22,7 +25,7 @@ public class Character : MonoBehaviour
     public Vector2Int CosmonautPos;
 
     public Icon Ad1, IconMap;
-    public Icon Treasure, Icon_Shop;
+    public Icon Treasure, Icon_Shop, Terminal;
     public float BaseAdLengh = 10;
     public int stage = 1;
     public float Damage = 1f;
@@ -33,6 +36,7 @@ public class Character : MonoBehaviour
     public List<TimeSkip> TimeSkipsQueue = new List<TimeSkip>(); //
     public bool CanUseActiveArts = true;
 
+    public bool cheats = false;
     
     void Start()
     {
@@ -51,23 +55,34 @@ public class Character : MonoBehaviour
             }
         }
 
-        StartCoroutine(DamageTimer());
-
     }
     
     public void Heal(float hp)
     {
-        var tmp = Health;
-        Health += hp;
-        if(Health > MaxHealth)
-            Health = MaxHealth;
+        if (hp >= 0)
+        {
+            var tmp = Health;
+            Health += hp;
+            if (Health > MaxHealth)
+                Health = MaxHealth;
 
-        tmp = Health - tmp;
+            tmp = Health - tmp;
 
-        if(tmp < 0)       
-            tmp = 0;
-        
-        AddStats(Statistics.HpHealed, tmp);
+            if (tmp < 0)
+                tmp = 0;
+
+            AddStats(Statistics.HpHealed, tmp);
+        }
+        else
+        {
+            var tmp = OverHealth;
+            OverHealth += hp;
+            if (OverHealth < 0)
+            {
+                OverHealth = 0;
+                Health += hp + tmp;
+            }
+        }
     }
     public void DeleteItem(int index)
     {
@@ -285,12 +300,11 @@ public class Character : MonoBehaviour
         switch (roomType)
         {
             case MapGenerator.RoomTypes.Fight:
-                Ad1.StartApp();
-                StartTimer(BaseAdLengh + 10 * stage);
+                StartCoroutine(WaitOneFrame(BaseAdLengh + 10 * stage));
                 break;
             case MapGenerator.RoomTypes.Boss:
-                Ad1.StartApp();
-                StartTimer(BaseAdLengh + 10 * stage + BossTimeAdder);
+                boss = 1;
+                StartCoroutine(WaitOneFrame(BaseAdLengh + 10 * stage + BossTimeAdder));
                 break;
             case MapGenerator.RoomTypes.Shop:
                 Icon_Shop.StartApp();
@@ -301,14 +315,65 @@ public class Character : MonoBehaviour
                 break;
         }
     }
+    IEnumerator WaitOneFrame(float a)
+    {
+        Ad1.StartApp();
+        yield return null;
+        StartTimer(a);
+    }
+    TerminalTemplate tt;
+    public void SetTT(TerminalTemplate t)
+    {
+        tt = t;
+    }
+    public bool Defeated = false;
+    public GameObject RestartButton, Cracks2;
+    public UnityEngine.UI.Image WallPaper;
+    public void Restart()
+    {
+        SceneManager.LoadScene(0);
+    }
+    public Sprite Cracks;
+    IEnumerator Def()
+    {
+        yield return null;
+        WallPaper.sprite = Cracks;
+        Cracks2.SetActive(true);
+        Health = MaxHealth;
+        string me = "\ncongrats, you died\nyou can continue playing, but our company is not responsible for the possible consequences.\nThe restart button is now in the lower right corner.\n";
+        for (int i = 0; i < me.Length; i++)
+        {
+            tt.content += me[i];
+            yield return new WaitForSecondsRealtime(0.025f);
+        }
+        RestartButton.SetActive(true);
+        
+    }
     void Update()
     {
         
         if (Health > MaxHealth) Health = MaxHealth;
-        if (Health <= 0)
+        if (OverHealth > 0 && Health < MaxHealth)
         {
+            float temp = MaxHealth - Health;
+            Health = MaxHealth;
+            OverHealth -= temp;
+        }
+        if (Input.GetKeyDown(KeyCode.BackQuote)) 
+        {
+            Terminal.StartApp();       
+        }
+        if (Health <= 0 && !Defeated)
+        {
+            Defeated = true;
             //Debug.Log("¬сЄ, ты умер");
-            SceneManager.LoadScene(2);
+            //SceneManager.LoadScene(2);
+            Terminal.StartApp();
+            StartCoroutine(Def());  
+        }
+        if (PlayingAd)
+        {
+            Timer2();
         }
         if (ad != null)
         {
@@ -330,7 +395,7 @@ public class Character : MonoBehaviour
             item.ItemType.OnEachFrame();
         }
 
-        if (stage >= 4)
+        if (stage >= 4 && !Defeated)
         {
             SceneManager.LoadScene(1);
         }
@@ -343,11 +408,12 @@ public class Character : MonoBehaviour
     public Ad ad = null;
 
     bool canBeDamaged = false;
-    bool endlessTimer = true;
     public void StartTimer(float Duration)
     {
         endTime += Duration;
-        StartCoroutine(Timer());
+        //StartCoroutine(Timer());
+        InitAdPlayer();
+        PlayingAd = true;
     }
     public void ClearRoom()
     {
@@ -405,6 +471,8 @@ public class Character : MonoBehaviour
     }
 
 
+
+
     public bool TryAddActiveItem()
     {
         if (activeItems.Count < 2)
@@ -427,7 +495,11 @@ public class Character : MonoBehaviour
             Debug.LogError("Reached limit of ActiveItems");
         }
     }
-
+    public void OldAdFeature()
+    {
+        AdFeatures.Add(GetComponent<ItemsHolder>().CreateAdFeature());
+        ad.RefreshFeatures();
+    }
 
     public void SkipTime(float duration, TimeSkip.DurationType dt, float place, TimeSkip.PlaceType pt, bool cond = true)
     {
@@ -441,55 +513,63 @@ public class Character : MonoBehaviour
             time -= duration * endTime;
     } 
     bool TimerStarted = false, skipAd = false;
+
+    int boss = 0;
     int AdFeaturesCount()
     {
-        return 0;
+        return stage + Random.Range(0, 2) + Random.Range(0, 2) + boss;
     }
-    IEnumerator Timer()
+
+    bool PlayingAd = false;
+    float sec;
+
+    void InitAdPlayer()
     {
-        if (TimerStarted == false)
+        canBeDamaged = true;
+        OnAdStarts();
+        AdFeatures.Clear();
+        var tmp1 = AdFeaturesCount();
+        for (int i = 0; i < tmp1; i++)
         {
-            TimerStarted = true;
-            canBeDamaged = true;
-            OnAdStarts();
-            yield return null;
-            float sec = 0;
+            AdFeatures.Add(GetComponent<ItemsHolder>().CreateAdFeature());
+        }
 
-            AdFeatures.Clear();
-            var tmp1 = AdFeaturesCount();
-            for (int i = 0; i < tmp1; i++)
+        for (int i = 0; i < AdFeatures.Count; i++)
+        {
+            AdFeatures[i].Init();
+        }
+        ad.RefreshFeatures();
+    }
+    public bool autoSkip = false;
+    void Timer2()
+    {
+        if (autoSkip) skipAd = true;
+        if ((time < endTime) && !skipAd)
+        {
+            if (time < endTime / 2)//перва€ половина
             {
-                AdFeatures.Add(GetComponent<ItemsHolder>().CreateAdFeature());
+                //yield return new WaitForSeconds(TesttimeMultiplier / MultLeft); //срочно фиксить
+                time += Time.deltaTime * MultLeft;
             }
-            
-            for (int i = 0; i < AdFeatures.Count; i++)
+            else//втора€
             {
-                AdFeatures[i].Init();
+                //yield return new WaitForSeconds(TesttimeMultiplier / MultRight); //срочно фиксить
+                time += Time.deltaTime * MultRight;
             }
 
-            while (time < endTime && !skipAd)
+            sec += Time.deltaTime;
+            if (sec >= 1)
             {
-                if (time < endTime / 2)//перва€ половина
-                {
-                    yield return new WaitForSeconds(TesttimeMultiplier / MultLeft);
-                    time += TesttimeMultiplier;
-                }
-                else//втора€
-                {
-                    yield return new WaitForSeconds(TesttimeMultiplier / MultRight);
-                    time += TesttimeMultiplier;
-                }
-
-                sec += TesttimeMultiplier;
-                if (sec >= 1)
-                {
-                    OnEachSec();
-                    sec = 0;
-                }
-
-                float skip = TimeSkipMax();
-                time += skip;
+                OnEachSec();
+                if (canBeDamaged) Heal(-Damage);
+                sec = 0;
             }
+
+            float skip = TimeSkipMax();
+            time += skip;
+        }
+        else
+        {
 
 
             canBeDamaged = false;
@@ -502,9 +582,11 @@ public class Character : MonoBehaviour
             ad = null;
             skipAd = false;
             TimerStarted = false;
-            
+            boss = 0;
+            PlayingAd = false;
             OnFightEnd();
         }
+
     }
 
     private float TimeSkipMax()
@@ -739,30 +821,6 @@ public class Character : MonoBehaviour
         return skip;
     }
 
-    IEnumerator DamageTimer()
-    {
-        float DamageTime = 0;
-        while (endlessTimer)
-        {
-            if (canBeDamaged)
-            {
-                yield return new WaitForSeconds(TesttimeMultiplier);
-                DamageTime += TesttimeMultiplier;
-                if (DamageTime > 1)
-                {
-                    Health -= Damage;
-                    DamageTime = 0;
-                }
-                
-            }
-            else
-            {
-                yield return null;
-            }
-        }
-        
-    }
-
     public void OnActiveArtUsed(int index)
     {
         foreach(Item item in items)
@@ -798,6 +856,10 @@ public class Character : MonoBehaviour
         AddStats(Stats.Statistics.MoneyRecived, (int)(endTime * MoneyMultiplier + MoneyAdder));
         endTime = 0;
         CanMove = true;
+        foreach (AdFeature feature in AdFeatures) 
+        {
+            feature.OnFigthEnd();
+        }
         AdFeatures.Clear();
         if (generator != null)
         {
@@ -805,6 +867,7 @@ public class Character : MonoBehaviour
             {
                 stage += 1;
                 CosmonautPos = Vector2Int.zero;
+                cosmonaut.RefreshPos();
                 OnNewStage();
                 generator.ReConnect();
                 generator.ClearArrays();

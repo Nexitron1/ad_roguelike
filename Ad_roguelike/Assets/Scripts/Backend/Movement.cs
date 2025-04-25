@@ -21,6 +21,10 @@ public class Movement : MonoBehaviour
         transform.localPosition = new Vector2(transform.localPosition.x + 245 * MyPos.x, transform.localPosition.y + 245 * MyPos.y);
 
     }
+    public void RefreshPos()
+    {
+        MyPos = character.CosmonautPos;
+    }
     void Update()
     {
         if (character.CanMove)
@@ -49,7 +53,7 @@ public class Movement : MonoBehaviour
                     }
                 }
             }
-            if (Input.GetKeyDown(KeyCode.UpArrow))
+            if (Input.GetKeyDown(KeyCode.UpArrow) && !Input.GetKey(KeyCode.LeftControl))
             {
                 if (generator.rooms.ContainsKey(new Vector2Int(MyPos.x, MyPos.y + 1)))
                 {
@@ -61,7 +65,7 @@ public class Movement : MonoBehaviour
                     }
                 }
             }
-            if (Input.GetKeyDown(KeyCode.DownArrow))
+            if (Input.GetKeyDown(KeyCode.DownArrow) && !Input.GetKey(KeyCode.LeftControl))
             {
                 if (generator.rooms.ContainsKey(new Vector2Int(MyPos.x, MyPos.y - 1)))
                 {

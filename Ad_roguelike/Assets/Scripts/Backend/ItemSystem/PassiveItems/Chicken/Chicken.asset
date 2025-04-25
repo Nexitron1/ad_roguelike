@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   character: {fileID: 0}
   itemName: "\u0436\u0430\u0440\u0435\u043D\u043D\u0430\u044F \u043A\u0443\u0440\u043E\u0447\u043A\u0430"
-  icon: {fileID: -1259340976, guid: 0447691a148bae54ba3f0f802d5f7232, type: 3}
-  largeIcon: {fileID: -1225379713, guid: de7a8a7a6eaac454a948754d864db6be, type: 3}
+  icon: {fileID: -929779198, guid: af313b26c1bed1643a3d750cd9965227, type: 3}
+  largeIcon: {fileID: 1308988681, guid: 518e2a0b83ea8f04f890b06ae4ab6080, type: 3}
   descriptions:
   - "+0.1 \u0443\u0441\u043A\u043E\u0440\u0435\u043D\u0438\u044F \u0437\u0430 \u043A\u0430\u0436\u0434\u0443\u044E
     \u043F\u0440\u043E\u0441\u043C\u043E\u0442\u0440\u0435\u043D\u043D\u0443\u044E

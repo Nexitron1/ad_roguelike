@@ -5,13 +5,13 @@ using TMPro;
 public class HpBarShop : MonoBehaviour
 {
     [SerializeField] Slider HpSlider;
-    [SerializeField] TMP_Text Text, MinHpText, MaxHpText;    
+    [SerializeField] TMP_Text MinHpText, MaxHpText;    
     void Start()
     {
         
     }
     void Update()
     {
-        Text.text = HpSlider.value.ToString();
+        //MinHpText.text = HpSlider.value.ToString();
     }
 }

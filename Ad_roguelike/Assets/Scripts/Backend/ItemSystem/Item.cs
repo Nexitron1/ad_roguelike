@@ -41,17 +41,17 @@ public class Item : ScriptableObject
     }
     public enum Functional //Добавлять для каждого предмета!!!!!
     {
-        Cuprum,
-        Pen,
-        AntiVirus,
-        Medali,
-        Arctic,
-        PrinterBox,
-        Key,
-        Kurevo,
-        Chicken,
-        Furnace,
-        Dirt
+        cuprum,
+        pen,
+        antivirus,
+        medali,
+        arctic,
+        printerbox,
+        key,
+        kurevo,
+        chicken,
+        furnace,
+        dirt
     }
     public static Item CreateItem(Functional func)
     {
@@ -65,27 +65,27 @@ public class Item : ScriptableObject
     {
         switch (f)
         {
-            case Functional.Cuprum:
+            case Functional.cuprum:
                 return Item.CreateInstance<Cuprum>();
-            case Functional.Pen:
+            case Functional.pen:
                 return Item.CreateInstance<Pen>();
-            case Functional.AntiVirus:
+            case Functional.antivirus:
                 return Item.CreateInstance<AntiVirus>();
-            case Functional.Medali:
+            case Functional.medali:
                 return Item.CreateInstance<Medali>();
-            case Functional.Arctic:
+            case Functional.arctic:
                 return Item.CreateInstance<Arctic>();
-            case Functional.PrinterBox:
+            case Functional.printerbox:
                 return Item.CreateInstance<PrinterBox>();
-            case Functional.Key: 
+            case Functional.key: 
                 return Item.CreateInstance<Key>();
-            case Functional.Kurevo:
+            case Functional.kurevo:
                 return Item.CreateInstance<Kurevo>();
-            case Functional.Chicken: 
+            case Functional.chicken: 
                 return Item.CreateInstance<Chicken>();
-            case Functional.Furnace:
+            case Functional.furnace:
                 return Item.CreateInstance<Furnace>();
-            case Functional.Dirt:
+            case Functional.dirt:
                 return Item.CreateInstance<Dirt>();
         }
         return null;

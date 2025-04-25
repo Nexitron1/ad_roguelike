@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9111be60ae2e5a42937b2b79ee79027, type: 3}
   m_Name: Monster
   m_EditorClassIdentifier: 
-  BgSize: {x: 8, y: 8}
+  BgSize: {x: 9, y: 8}
   BgColor: {r: 0.31132078, g: 0.31132078, b: 0.31132078, a: 1}
-  DragTabSize: {x: 8, y: 0.25}
+  DragTabSize: {x: 9, y: 0.25}
   DragTabColor: {r: 1, g: 1, b: 1, a: 1}
-  Title: BomBom (Ad)
+  Title: Advertisement
   Template: {fileID: 8516593470759848351, guid: 9a33c77229d21dc46bf5ccd046fb0de4, type: 3}
   HasExitKrest: 0

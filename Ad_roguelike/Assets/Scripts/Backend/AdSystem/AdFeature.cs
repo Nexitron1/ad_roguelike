@@ -84,7 +84,7 @@ public class AdFeature : ScriptableObject
     public virtual void Init() { ch = Camera.main.GetComponent<Character>(); }
     public virtual void OnEachSec() { }
     public virtual void OnActiveArtUsed(int index) { }
-
+    public virtual void OnFigthEnd() { }
     public virtual bool Random(float LuckChance)
     {
         float r = UnityEngine.Random.Range(0f, 1f);

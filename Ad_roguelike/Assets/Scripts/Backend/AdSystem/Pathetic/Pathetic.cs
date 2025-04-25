@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class Pathetic : AdFeature
 {
-    float damageBoosted = 0;
+    float damageBoosted = 0, StartDamage = 0;
 
     public override void Init()
     {
         base.Init();
+        StartDamage = ch.Damage;
         ch.Damage += damageBoosted;
     }
 
@@ -34,5 +35,10 @@ public class Pathetic : AdFeature
                 ch.Damage += 0.8f;
                 break;
         }
+    }
+    public override void OnFigthEnd()
+    {
+        base.OnFigthEnd();
+        ch.Damage = StartDamage;
     }
 }

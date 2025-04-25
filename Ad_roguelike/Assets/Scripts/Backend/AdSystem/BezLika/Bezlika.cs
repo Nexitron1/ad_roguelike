@@ -9,17 +9,17 @@ public class Bezlika : AdFeature
         switch (myDiff)
         {
             case Difficulty.easy:
-                ch.DenyTime(2);
+                ch.endTime += 2;
                 break;
             case Difficulty.normal:
-                ch.DenyTime(0.1f, true);
+                ch.endTime *= 1.1f;
                 break;
             case Difficulty.hard:
-                ch.DenyTime(5);
+                ch.endTime += 5;
                 break;
             case Difficulty.extreme:
-                ch.DenyTime(5);
-                ch.DenyTime(0.15f, true);
+                ch.endTime += 5;
+                ch.endTime *= 1.15f;
                 break;
         }
     }

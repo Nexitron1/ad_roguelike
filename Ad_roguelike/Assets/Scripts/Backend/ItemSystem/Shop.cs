@@ -97,6 +97,7 @@ public class Shop : MonoBehaviour
         Name.transform.parent.gameObject.SetActive(true);
         ActPass.gameObject.SetActive(true);
 
+        if (z < 0) Debug.LogError("WTF");
         if (z < 3)
         {
             ActPass.text = "пассивный предмет";

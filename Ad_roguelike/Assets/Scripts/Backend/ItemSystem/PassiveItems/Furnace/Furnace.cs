@@ -20,7 +20,6 @@ public class Furnace : Item
                 break;
             case Rarity.special:
                 itemsBuyed = (int)character.GetStats(Stats.Statistics.ItemsBuyed);
-                //когда статистику сделаю
                 break;
         }
     }

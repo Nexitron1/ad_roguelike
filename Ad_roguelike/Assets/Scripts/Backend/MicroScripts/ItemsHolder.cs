@@ -27,10 +27,88 @@ public class ItemsHolder : MonoBehaviour
         return item;
     }
 
+    public Item CreateItem(Item.Functional f)
+    {
+        Item item;
+        int r = -1;  
+        for (int i = 0; i < Items.Length; i++)
+        {
+            if (Items[i].functional == f)
+            {
+                r = i; 
+                break;
+            }
+        }
+        item = Item.CreateItem(f);
+        item.SetFunctional(GetRarity());
+        item.rarity = GetRarity();
+        item.icon = Items[r].icon;
+        item.largeIcon = Items[r].largeIcon;
+        item.character = Items[r].character;
+        item.itemName = Items[r].itemName;
+        item.descriptions = Items[r].descriptions;
+        item.functional = Items[r].functional;
+
+        return item;
+    }
+
+    public Item CreateItem(Item.Functional f, Item.Rarity rarity)
+    {
+        Item item;
+        int r = -1;
+        for (int i = 0; i < Items.Length; i++)
+        {
+            if (Items[i].functional == f)
+            {
+                r = i;
+                break;
+            }
+        }
+        item = Item.CreateItem(f);
+        item.SetFunctional(rarity);
+        item.rarity = rarity;
+        item.icon = Items[r].icon;
+        item.largeIcon = Items[r].largeIcon;
+        item.character = Items[r].character;
+        item.itemName = Items[r].itemName;
+        item.descriptions = Items[r].descriptions;
+        item.functional = Items[r].functional;
+
+        return item;
+    }
+
     public ActiveItem CreateActiveItem()
     {
         ActiveItem item;
         int r = Random.Range(0, ActiveItems.Length);
+
+        item = ActiveItem.CreateItem(ActiveItems[r].functional);
+        item.SetFunctional();
+        item.icon = ActiveItems[r].icon;
+        item.largeIcon = ActiveItems[r].largeIcon;
+        item.character = ActiveItems[r].character;
+        item.itemName = ActiveItems[r].itemName;
+        item.description = ActiveItems[r].description;
+        item.functional = ActiveItems[r].functional;
+        item.myType = ActiveItems[r].myType;
+        item.UsesLeft = ActiveItems[r].UsesLeft;
+        item.MaxUses = ActiveItems[r].MaxUses;
+
+        return item;
+    }
+
+    public ActiveItem CreateActiveItem(ActiveItem.Functional f)
+    {
+        ActiveItem item;
+        int r = -1;
+        for (int i = 0; i < ActiveItems.Length; i++)
+        {
+            if (ActiveItems[i].functional == f)
+            {
+                r = i;
+                break;
+            }
+        }
         item = ActiveItem.CreateItem(ActiveItems[r].functional);
         item.SetFunctional();
         item.icon = ActiveItems[r].icon;

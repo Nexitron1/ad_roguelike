@@ -17,17 +17,17 @@ public class ActiveItem : ScriptableObject
 
     public enum Functional //Добавлять для каждого предмета!!!!!
     {
-        Blue,
-        Black,
-        Drops,
-        Cent,
-        Transistor,
-        Silver,
-        Sifter,
-        Oil,
-        Fish,
-        ItemDeletter,
-        Glue
+        blue,
+        black,
+        drops,
+        cent,
+        transistor,
+        silver,
+        sifter,
+        oil,
+        fish,
+        itemdeletter,
+        glue
     }
     public enum Type
     {
@@ -48,27 +48,27 @@ public class ActiveItem : ScriptableObject
     {
         switch (f)
         {
-            case Functional.Blue:
+            case Functional.blue:
                 return ActiveItem.CreateInstance<BlueScotch>();
-            case Functional.Black:
+            case Functional.black:
                 return ActiveItem.CreateInstance<BlackScotch>();
-            case Functional.Drops:
+            case Functional.drops:
                 return ActiveItem.CreateInstance<Drops>();
-            case Functional.Cent:
+            case Functional.cent:
                 return ActiveItem.CreateInstance<Cent>();
-            case Functional.Transistor:
+            case Functional.transistor:
                 return ActiveItem.CreateInstance<Transistor>();
-            case Functional.Silver:
+            case Functional.silver:
                 return ActiveItem.CreateInstance<Silver>();
-            case Functional.Sifter:
+            case Functional.sifter:
                 return ActiveItem.CreateInstance<Sifter>();
-            case Functional.Oil:
+            case Functional.oil:
                 return ActiveItem.CreateInstance<Oil>();
-            case Functional.Fish:
+            case Functional.fish:
                 return ActiveItem.CreateInstance<Fish>();
-            case Functional.ItemDeletter:
+            case Functional.itemdeletter:
                 return ActiveItem.CreateInstance<ItemDeletter>();
-            case Functional.Glue:
+            case Functional.glue:
                 return ActiveItem.CreateInstance<Glue>();
 
         }
